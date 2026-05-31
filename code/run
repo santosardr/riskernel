@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+
+# Code Ocean Entrypoint Script
+# Detect and selectively extract pre-cached Hugging Face models if mounted under /data
+if [ -f /data/models/huggingface_hub_cache.tar.gz ]; then
+    export HF_HOME="$HOME/.cache/huggingface"
+    
+    # Check if target model cache directories already exist
+    if [ -d "$HF_HOME/hub/models--Qwen--Qwen2-1.5B-Instruct" ] && [ -d "$HF_HOME/hub/models--TinyLlama--TinyLlama-1.1B-Chat-v1.0" ]; then
+        echo "[INFO] Pre-cached models already extracted. Skipping extraction."
+    else
+        echo "[INFO] Extracting pre-cached models (Qwen2 and TinyLlama) from data asset..."
+        mkdir -p "$HF_HOME"
+        tar -xzf /data/models/huggingface_hub_cache.tar.gz -C "$HF_HOME"
+        echo "[INFO] Cache extracted successfully to $HF_HOME"
+    fi
+else
+    echo "[WARNING] Pre-cached models archive not found at /data/models/huggingface_hub_cache.tar.gz. Models will be downloaded dynamically."
+    # Redirect cache to local home directory if /data is not writable (e.g. on personal computers)
+    if [ -d "/data" ] && [ -w "/data" ]; then
+        export HF_HOME=/data/models/huggingface
+    else
+        export HF_HOME="$HOME/.cache/huggingface"
+    fi
+fi
+
+export HF_HUB_DISABLE_SYMLINKS_WARNING=1
+
+echo "=== System Check ==="
+lscpu | grep -E "Nome do modelo|Model name|CPU\(s\):|CPU de" || true
+free -h
+
+echo "=== Listing Capsule Files in /code ==="
+find . -maxdepth 3 -not -path '*/.*' || true
+
+echo "=== Running RIS-Kernel Benchmark ==="
+
+python3 -u scripts/benchmark/run_benchmark.py \
+    --windows "0,16384" \
+    --models "qwen2" \
+    --densities "0.05" \
+    --n_seeds "1" \
+    --out_csv "/results/results_64.csv"
+
+echo "=== Generating Primary Manuscript Figures ==="
+# We generate only the two primary figures to keep the results clean and focused:
+# 1. fig_accuracy_window.pdf (Stability curve up to 64k window)
+# 2. fig_heatmap_seeds_density.pdf (Sweet spot analysis crossing density vs. seeds)
+python3 article/fig/gen_fig_accuracy_window.py
+python3 article/fig/gen_fig_heatmap_dual.py
+
+# Copy the primary generated PDFs to the mounted Code Ocean results directory
+cp article/fig_accuracy_window.pdf /results/
+cp article/fig_heatmap_seeds_density.pdf /results/
+
+echo "=== Execution Finished ==="

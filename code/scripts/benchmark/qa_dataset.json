@@ -1,0 +1,898 @@
+[
+    {
+        "id": 1,
+        "question": "In version 1.0 of GenPPi, what specific impact did the Buchnera aphidicola genome show before the machine learning features were introduced?",
+        "options": [
+            "A) A massively overgrown network",
+            "B) A relatively low number of nodes and edges",
+            "C) A complete system crash",
+            "D) High structural conservation",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 500
+    },
+    {
+        "id": 2,
+        "question": "Who specifically conceived the GenPPI project, supervised the work, and developed the core components of the software?",
+        "options": [
+            "A) ASi",
+            "B) CM and IG",
+            "C) ARS",
+            "D) BT",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "answer_token_position": 1000
+    },
+    {
+        "id": 3,
+        "question": "According to the abstract/metadata, what is the exact URL where GenPPi version 1.5 is available for download?",
+        "options": [
+            "A) https://genppi.facom.ufu.br/",
+            "B) https://genppi.github.io/",
+            "C) https://www.ufu.br/genppi",
+            "D) https://genppi.sourceforge.net/",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "answer_token_position": 1500
+    },
+    {
+        "id": 4,
+        "question": "What is the consequence of naively maximizing the number of predicted protein similarities?",
+        "options": [
+            "A) Better model accuracy",
+            "B) Exacerbation of the computational burden of downstream steps",
+            "C) Shorter computational times",
+            "D) Loss of GUI responsiveness",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 2000
+    },
+    {
+        "id": 5,
+        "question": "A key aspect of GenPPI users' rules allows the end user to decide:",
+        "options": [
+            "A) The coloration of the network nodes",
+            "B) How many and which genomes to use in constructing the protein interaction network",
+            "C) The pricing of the cloud instance",
+            "D) The specific programming language output",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 3000
+    },
+    {
+        "id": 6,
+        "question": "What specific statistical test was utilized to compare the empirical distribution functions of topological metrics like Degree across replicates?",
+        "options": [
+            "A) Student's t-test",
+            "B) Kolmogorov-Smirnov (KS) Test (Multi-Sample)",
+            "C) ANOVA",
+            "D) Chi-Square Test",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 4000
+    },
+    {
+        "id": 7,
+        "question": "In the GenPPI Random Forest optimization table, against which independent test set were the overall performance metrics reported?",
+        "options": [
+            "A) E. coli + Salmonella",
+            "B) C. pseudotuberculosis + C. glutamicum",
+            "C) S. aureus + B. subtilis",
+            "D) Human interactome only",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 5000
+    },
+    {
+        "id": 8,
+        "question": "Which specific author supervised the overall work as opposed to conceiving the project in GenPPI?",
+        "options": [
+            "A) ASi",
+            "B) ARS",
+            "C) BT",
+            "D) MB",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "answer_token_position": 6000
+    },
+    {
+        "id": 9,
+        "question": "Introducing Features and Machine Learning to GenPPI version 1.0 caused what effect on Buchnera aphidicola networks?",
+        "options": [
+            "A) Reduced number of nodes to zero",
+            "B) Notable increase in the number of nodes and edges",
+            "C) Caused network fragmentation",
+            "D) Had absolutely no effect",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 7000
+    },
+    {
+        "id": 10,
+        "question": "In the GenPPI analysis, the optimization table evaluates Random Forest models across how many negative-to-positive instance ratios?",
+        "options": [
+            "A) Three",
+            "B) Five",
+            "C) Seven",
+            "D) Ten",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "answer_token_position": 7800
+    },
+    {
+        "id": 11,
+        "question": "What happens if a user naively maximizes predicted similarities in GenPPI?",
+        "options": [
+            "A) Computational burden decreases",
+            "B) It exacerbates computational burden of downstream steps",
+            "C) Network nodes disappear",
+            "D) The model converges instantly",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 8600
+    },
+    {
+        "id": 12,
+        "question": "Which entity is empowered by GenPPI to select the genomes for network construction?",
+        "options": [
+            "A) The Machine Learning core",
+            "B) The end user",
+            "C) The Random Forest algorithm",
+            "D) The cloud administrator",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "answer_token_position": 9400
+    },
+    {
+        "id": 13,
+        "question": "What is the exact email address of the corresponding author listed in the AOM paper?",
+        "options": [
+            "A) anderson@ufu.br",
+            "B) santosardr@ufu.br",
+            "C) ueira@ufu.br",
+            "D) admin@genppi.org",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 10200
+    },
+    {
+        "id": 14,
+        "question": "How many target proteins did the AOM network include initially (before neighbor expansion)?",
+        "options": [
+            "A) 12",
+            "B) 34",
+            "C) 123",
+            "D) 2467",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 11000
+    },
+    {
+        "id": 15,
+        "question": "According to the ETRC module, which specific AOM electron transfer protein directly connects to the core nitrogenase components NifD and NifK?",
+        "options": [
+            "A) HdrABC",
+            "B) HdrDE",
+            "C) C5S33_05775",
+            "D) MCR",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 11800
+    },
+    {
+        "id": 16,
+        "question": "Which organism’s enzymes were used as queries to identify the Factor F430 biosynthesis (Cfb) pathway in ANME-2a?",
+        "options": [
+            "A) Bacillus cereus",
+            "B) E. coli",
+            "C) Methanosarcina acetivorans",
+            "D) Acetilactobacillus jinshanensis",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "aom.txt",
+        "answer_token_position": 12600
+    },
+    {
+        "id": 17,
+        "question": "Which specific statistical indication proved the power-law model provided a significantly better fit than the lognormal model?",
+        "options": [
+            "A) p ≈ 0.05",
+            "B) p ≈ 3.0 × 10−27",
+            "C) p ≈ 1.0 × 10−5",
+            "D) p ≈ 0.99",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 13500
+    },
+    {
+        "id": 18,
+        "question": "What specific function does the cytoplasmic hypothetical protein MRG76964.1 serve in module CC1M?",
+        "options": [
+            "A) Oxygen sensing",
+            "B) A critical inter-module bridge connecting facets of C1 and redox metabolism",
+            "C) Complete breakdown of ATP",
+            "D) Ribosomal translation framing",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 14300
+    },
+    {
+        "id": 19,
+        "question": "In the MFCB module's enriched functions, what specific metabolic pathways were completely absent from the evidence?",
+        "options": [
+            "A) Translation and transcription",
+            "B) Pathways related to methane oxidation or nitrogen fixation",
+            "C) Lactate production",
+            "D) Glucose metabolism",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 15100
+    },
+    {
+        "id": 20,
+        "question": "What prevents metabolic cross-talk and ensures complex metallo-cofactors reach their targets with high fidelity?",
+        "options": [
+            "A) Rapid degradation",
+            "B) Having dedicated shuttle proteins",
+            "C) High cellular temperatures",
+            "D) Random cytoplasmic diffusion",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 15900
+    },
+    {
+        "id": 21,
+        "question": "What is the stated specific purpose of continuing to probe ecosystems with metatranscriptomics and metaproteomics?",
+        "options": [
+            "A) To count the number of extinct species",
+            "B) To confirm the expression and activity of integrated pathways in situ, linking genomic potential to real-world function",
+            "C) To sequence new viral pathogens",
+            "D) To artificially cultivate methanogens in zero-gravity",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 16700
+    },
+    {
+        "id": 22,
+        "question": "MRG76973.1 is specifically annotated as which partial heterodisulfide reductase?",
+        "options": [
+            "A) HdrDE",
+            "B) HdrABC",
+            "C) MCR subunit C",
+            "D) NifN",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 17500
+    },
+    {
+        "id": 23,
+        "question": "Which specific protein serves as the essential linker between F430 production and MCR assembly?",
+        "options": [
+            "A) C5S33_05775",
+            "B) MRG76964.1",
+            "C) HdrABC",
+            "D) NifD",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "aom.txt",
+        "answer_token_position": 18300
+    },
+    {
+        "id": 24,
+        "question": "MRG76473.1 corresponds to which nitrogenase-associated protein?",
+        "options": [
+            "A) NifD",
+            "B) NifK",
+            "C) NifN",
+            "D) HdrDE",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "aom.txt",
+        "answer_token_position": 19100
+    },
+    {
+        "id": 25,
+        "question": "What does module CC1M connect via the inter-module bridge protein MRG76964.1?",
+        "options": [
+            "A) Amino acid and lipid assembly",
+            "B) C1 and redox metabolism",
+            "C) DNA and RNA replication",
+            "D) Sugar and strictly aerobic respiration",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "aom.txt",
+        "answer_token_position": 19900
+    },
+    {
+        "id": 26,
+        "question": "What software tool was provided as a 'minimal runner' to execute SBML models directly?",
+        "options": [
+            "A) sim_growth.sh",
+            "B) run_sbml_model.py",
+            "C) flux_analyzer.exe",
+            "D) compile_b_cereus.R",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 20700
+    },
+    {
+        "id": 27,
+        "question": "In the interactome visualization, enzymes exclusive to the EMP pathway are denoted by which visual marker?",
+        "options": [
+            "A) Inner green circle",
+            "B) Outer red circle",
+            "C) Shared purple center",
+            "D) Blue isolated nodes",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 21500
+    },
+    {
+        "id": 28,
+        "question": "Enzymes exclusive to the PKP pathway are visualized using which specific representation?",
+        "options": [
+            "A) Inner green circle",
+            "B) Outer red circle",
+            "C) Purple bridging nodes",
+            "D) Black triangles",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 22300
+    },
+    {
+        "id": 29,
+        "question": "What score output does GenPPI use to reflect the strength of genomic signals like profile similarity?",
+        "options": [
+            "A) A p-value from 0.01 to 0.05",
+            "B) A confidence score ranging from 0 to 1",
+            "C) A raw nucleotide count",
+            "D) A binary Yes/No classification",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 23100
+    },
+    {
+        "id": 30,
+        "question": "Which transcription regulator families are notably identified among the B. cereus environmental sensing hubs?",
+        "options": [
+            "A) CtsR, TetR/AcrR, PadR",
+            "B) RpoS, Sigma32",
+            "C) SoxR, OxyR",
+            "D) LacI, TrpR",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 23900
+    },
+    {
+        "id": 31,
+        "question": "Metabolic flux analysis specifically indicated that both studied isolates possess pathways for producing which precursors?",
+        "options": [
+            "A) Lignin precursors",
+            "B) Terpenoid precursors",
+            "C) Alkaloid substrates",
+            "D) Cellulose fibers",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 24700
+    },
+    {
+        "id": 32,
+        "question": "Which specific complete pathways for production were computationally identified in Acetilactobacillus jinshanensis offering a molecular basis for its metabolic profile?",
+        "options": [
+            "A) Lactate and ethanol production",
+            "B) Methane and sulfur production",
+            "C) Glucose and oxygen production",
+            "D) Formaldehyde processing",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "ajinshanensis.txt",
+        "answer_token_position": 25500
+    },
+    {
+        "question": "What percentage of sequence identity was required by the original GenPPi (v1.0) for protein similarity assessment?",
+        "options": [
+            "A) > 90%",
+            "B) > 50%",
+            "C) > 75%",
+            "D) 100%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 33,
+        "answer_token_position": 28000
+    },
+    {
+        "question": "Which algorithm was integrated into GenPPi 1.5 to manage the computational complexity of interaction sampling?",
+        "options": [
+            "A) Neural Network Sampling",
+            "B) Principal Component Analysis",
+            "C) Reduced Interaction Sampling (RIS)",
+            "D) Markov Chain Monte Carlo",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "id": 34,
+        "answer_token_position": 28838
+    },
+    {
+        "question": "According to the text, which database is recognized as a gold standard in protein interaction analysis?",
+        "options": [
+            "A) GenBank",
+            "B) STRING",
+            "C) UniProt",
+            "D) PDB",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 35,
+        "answer_token_position": 29677
+    },
+    {
+        "question": "What programming language was GenPPi developed in?",
+        "options": [
+            "A) Python",
+            "B) Common Lisp",
+            "C) C++",
+            "D) Java",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 36,
+        "answer_token_position": 30516
+    },
+    {
+        "question": "What is the primary purpose of the propensity.dat file in GenPPi 1.5?",
+        "options": [
+            "A) To map specific physicochemical features of amino acids",
+            "B) To store genome alignments",
+            "C) To define network visualization colors",
+            "D) To authenticate users",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 37,
+        "answer_token_position": 31354
+    },
+    {
+        "question": "How many features does the Features algorithm generate for each protein in GenPPi 1.5?",
+        "options": [
+            "A) Twenty",
+            "B) Forty",
+            "C) Sixty",
+            "D) One hundred",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "id": 38,
+        "answer_token_position": 32193
+    },
+    {
+        "question": "The RIS algorithm divides a large phylogenetic profile into multiple sublists. What is the typical size of these sublists relative to the original profile?",
+        "options": [
+            "A) 90%",
+            "B) 50%",
+            "C) 10%",
+            "D) 25%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 39,
+        "answer_token_position": 33032
+    },
+    {
+        "question": "In the Machine Learning mode of GenPPi 1.5, what happens to the network edge density compared to the Features mode?",
+        "options": [
+            "A) It slightly decreases",
+            "B) It significantly increases",
+            "C) It remains exactly the same",
+            "D) It drops to zero",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 40,
+        "answer_token_position": 33870
+    },
+    {
+        "question": "What metric was used to measure the consistent presence of critical nodes across replicates in the RIS evaluation?",
+        "options": [
+            "A) Average Degree",
+            "B) Weighted Global Presence Mean (MGP)",
+            "C) Network Diameter",
+            "D) Clustering Coefficient",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 41,
+        "answer_token_position": 34709
+    },
+    {
+        "question": "Which parameter in GenPPi establishes the tolerated difference between phylogenetic profiles?",
+        "options": [
+            "A) -ppdifftolerated",
+            "B) -tolerate_diff",
+            "C) -diff_max",
+            "D) -profile_variance",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 42,
+        "answer_token_position": 35548
+    },
+    {
+        "question": "The cl-random-forest library used in GenPPi is an implementation of Random Forest for which specific Lisp compiler?",
+        "options": [
+            "A) Clozure CL",
+            "B) GNU CLISP",
+            "C) SBCL",
+            "D) ABCL",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "id": 43,
+        "answer_token_position": 36387
+    },
+    {
+        "question": "How many decision trees were utilized in the final customized Random Forest model for GenPPi?",
+        "options": [
+            "A) 100",
+            "B) 500",
+            "C) 1000",
+            "D) 50",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 44,
+        "answer_token_position": 37225
+    },
+    {
+        "question": "What was the average F1-Score of the finalized Random Forest model across the 26 diverse genome test sets?",
+        "options": [
+            "A) Approximately 51.4%",
+            "B) Approximately 90.0%",
+            "C) Approximately 25.0%",
+            "D) Approximately 99.9%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 45,
+        "answer_token_position": 38064
+    },
+    {
+        "question": "Which database management system was used to compare GenPPi results with STRING data?",
+        "options": [
+            "A) MySQL",
+            "B) MongoDB",
+            "C) PostgreSQL",
+            "D) SQLite",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "genppi.txt",
+        "id": 46,
+        "answer_token_position": 38903
+    },
+    {
+        "question": "How does GenPPi 1.5 handle repeated interactions during analysis?",
+        "options": [
+            "A) They are multiplied to increase weight",
+            "B) They are removed using Gephi",
+            "C) They are ignored completely",
+            "D) They cause a runtime error",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "genppi.txt",
+        "id": 47,
+        "answer_token_position": 39741
+    },
+    {
+        "question": "The GenPPi software is publicly available under which license?",
+        "options": [
+            "A) MIT License",
+            "B) GPLv3",
+            "C) Apache 2.0",
+            "D) Proprietary",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "genppi.txt",
+        "id": 48,
+        "answer_token_position": 40580
+    },
+    {
+        "question": "According to the abstract logic framing B. cereus hubs, defense mechanisms include all EXCEPT:",
+        "options": [
+            "A) Antitoxins",
+            "B) DNA repair enzymes",
+            "C) Catalase",
+            "D) CRISPR-Cas9 adaptive immunity",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "D",
+        "article_source": "ajinshanensis.txt",
+        "id": 49,
+        "answer_token_position": 41419
+    },
+    {
+        "question": "GenPPI assigns proximity and similarity confidence metrics ranging specifically from:",
+        "options": [
+            "A) 0 to 100",
+            "B) 0 to 1",
+            "C) -1 to 1",
+            "D) 1 to 10",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "ajinshanensis.txt",
+        "id": 50,
+        "answer_token_position": 42258
+    },
+    {
+        "question": "What software and version were exactly used to remove contaminants and obtain valid NGS data?",
+        "options": [
+            "A) Trimmomatic 0.39",
+            "B) SOAPnuke software (version 2.1.7)",
+            "C) FastQC 0.11",
+            "D) Cutadapt 3.1",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 51,
+        "answer_token_position": 43096
+    },
+    {
+        "question": "In the meta-analysis study, which specific chloroplast genome was assembled to provide a schematic representation?",
+        "options": [
+            "A) Arabidopsis thaliana",
+            "B) Lactuca sativa",
+            "C) Glycine max",
+            "D) Zea mays",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 52,
+        "answer_token_position": 43935
+    },
+    {
+        "question": "The output read quality value system in SOAPnuke was specifically set to what standard?",
+        "options": [
+            "A) Phred+64",
+            "B) Phred+33",
+            "C) Q10",
+            "D) Sanger Standard",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 53,
+        "answer_token_position": 44774
+    },
+    {
+        "question": "What specific equipment was used to assess Library quality before sequencing?",
+        "options": [
+            "A) Qubit 4 Fluorometer",
+            "B) Agilent 2100 Bioanalyzer",
+            "C) NanoDrop Spectrophotometer",
+            "D) Bio-Rad Gel Doc",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 54,
+        "answer_token_position": 45612
+    },
+    {
+        "question": "Who is the corresponding author strictly paired with 'Laboratory of Genetics, Institute of Biotechnology' in meta.txt?",
+        "options": [
+            "A) Anderson R. dos Santos",
+            "B) Carlos Ueira-Vieira",
+            "C) SilvaMacdo",
+            "D) Ranjan",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 55,
+        "answer_token_position": 46451
+    },
+    {
+        "question": "What is the specific address for the Laboratory of Genetics mentioned in the correspondence section?",
+        "options": [
+            "A) Acre Street, 2E building, room 226",
+            "B) Joao Naves de Avila Ave, Block 1A",
+            "C) Paulista Ave, Sao Paulo",
+            "D) Federal University Main Campus",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "meta.txt",
+        "id": 56,
+        "answer_token_position": 47290
+    },
+    {
+        "question": "The ANI value for ajita (this study) vs. A. jinshanensis (CP187400.1) was definitively measured at:",
+        "options": [
+            "A) 25.5%",
+            "B) 81.39%",
+            "C) 95.00%",
+            "D) 99.90%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 57,
+        "answer_token_position": 48129
+    },
+    {
+        "question": "What is the precise sequencing strategy and fragment length used for the libraries detailed in meta.txt?",
+        "options": [
+            "A) Ion Torrent 400 bp",
+            "B) DNBseq paired-end (150 bp)",
+            "C) Illumina Single-Read 50 bp",
+            "D) PacBio long-reads (10kb)",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 58,
+        "answer_token_position": 48967
+    },
+    {
+        "question": "Which default k-mer values were employed when assembling the scaffolds with SPAdes version 3.14.0?",
+        "options": [
+            "A) 21, 33, 55, and 77 bp",
+            "B) 11, 21, and 31 bp",
+            "C) 64 and 128 bp",
+            "D) 25, 45, and 85 bp",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "meta.txt",
+        "id": 59,
+        "answer_token_position": 49806
+    },
+    {
+        "question": "For the pollen count in larval food, what exact percentage was represented by the family Solanaceae?",
+        "options": [
+            "A) 21.72%",
+            "B) 8.24%",
+            "C) 24.97%",
+            "D) 88.00%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "meta.txt",
+        "id": 60,
+        "answer_token_position": 50645
+    },
+    {
+        "question": "What exact value was calculated for the representation of the Asteraceae family in the pollen count?",
+        "options": [
+            "A) Ra = 21.72%",
+            "B) Ra = 24.97%",
+            "C) Ra = 8.24%",
+            "D) Ra = 88%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "A",
+        "article_source": "meta.txt",
+        "id": 61,
+        "answer_token_position": 51483
+    },
+    {
+        "question": "What is the exact dDDH value range calculated between the ajita strain and Acetilactobacillus jinshanensis?",
+        "options": [
+            "A) 81.1–81.4%",
+            "B) 25–27%",
+            "C) >70%",
+            "D) 95–96%",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 62,
+        "answer_token_position": 52322
+    },
+    {
+        "question": "According to SilvaMacdo2023 referenced in the meta text, T. angustula visited plants from how many different families?",
+        "options": [
+            "A) 24",
+            "B) 88",
+            "C) 150",
+            "D) 4",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "B",
+        "article_source": "meta.txt",
+        "id": 63,
+        "answer_token_position": 53161
+    },
+    {
+        "question": "In the visualization schema, what color specifically represents the shared bridging enzymes?",
+        "options": [
+            "A) Green",
+            "B) Red",
+            "C) Purple",
+            "D) Yellow",
+            "E) None of the above / Not mentioned in the text"
+        ],
+        "correct_option": "C",
+        "article_source": "ajinshanensis.txt",
+        "id": 64,
+        "answer_token_position": 54000
+    }
+]

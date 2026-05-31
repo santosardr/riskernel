@@ -1,0 +1,394 @@
+Protein-protein interaction ,Interactome ,Facilitation ,Niche construction ,Acetilactobacillus jinshanensis ,Bacillus cereus
+
+Introduction
+
+Biological systems depend on intricate networks of metabolic pathways, orchestrated by a vast array of proteins with diverse functions [@Pavlopoulos2011]. The complete set of protein-protein interactions (PPIs) in an organism, known as the interactome, provides a comprehensive blueprint for understanding its biological processes. At the molecular level, PPIs drive most cellular functions, with an estimated 80% of proteins functioning within multi-protein complexes [@Berggard2007].
+
+The larval food of stingless bees represents a unique ecological niche characterized by rich microbiota and significant biotechnological potential due to its composition of fermented pollen, honey, and glandular secretions [@Santos2022a; @Vasquez2012]. This environment harbors bioactive compounds with antimicrobial, anti-inflammatory, and antioxidant properties [@Al-Hatamleh2020; @Mohammad2020]. Remarkably, recent studies identified the same bacterial species—Acetilactobacillus jinshanensis and Bacillus cereus—that Liu and Xu previously observed in vinegar fermentation environments [@Liu2023; @Xu2024], with both species being present in the larval food microbiome, presenting an unprecedented opportunity to validate their ecological hypothesis in a completely different biological system [@Santos2022b].
+
+In Zhenjiang aromatic vinegar fermentation, observational studies by Liu et al. [@Liu2023] and Xu et al. [@Xu2024] documented a clear temporal succession: B. cereus dominates the early alcoholic fermentation, while A. jinshanensis thrives in the later stages. These findings led to the compelling hypothesis that the two species perform complementary metabolic functions. Here, we explicitly frame this pattern through facilitation and niche construction, rather than classical competitive succession [@Connell1977; @OdlingSmee2003]. In this view, early-arriving taxa condition the environment (priority effects) in ways that alter resource accessibility and interaction structure for subsequent colonizers [@Fukami2015; @Widder2016]. Consistent with this model, we hypothesize that B. cereus functions as a pioneer that senses and actively modifies a fresh niche via secreted enzymes and effectors—depolymerizing complex substrates (e.g., pollen carbohydrates and proteins) and detoxifying or repurposing xenobiotics—thereby increasing the availability of simpler metabolites [@Duport2016; @Berlemont2023; @Ouertani2018; @Kang2014]. We further posit that A. jinshanensis is a fast-growth specialist whose high translational capacity and streamlined metabolism enable rapid exploitation of this conditioned niche once accessible substrates accumulate, explaining its late-stage dominance despite a fast-growth profile [@Arskold2008; @Farookhi2024; @Hu2020; @Goldford2018].
+
+Despite their ecological significance, the specific metabolic contributions and functional interactions of A. jinshanensis and B. cereus remain largely uncharacterized. In silico methods, particularly PPI network prediction, provide a powerful approach for generating hypotheses about metabolic capabilities and ecological functions from genomic data [@Anjos2021; @Silva2025].
+
+In this work, we employed comprehensive bioinformatics tools to construct and analyze the interactomes of A. jinshanensis CP171343 and B. cereus CP174498. Our objectives were to: (1) provide an in silico assessment of the Liu/Xu ecological hypothesis in a different biological system; (2) reveal the mechanistic basis of their complementary metabolic roles through a comparative analysis of network hub topology (BriCe outliers) in both interactomes; (3) identify key proteins and interactions that mediate metabolic integration; and (4) establish a methodological framework for validating ecological hypotheses using systems-level molecular approaches. This study presents an interactome-based assessment of ecological hypotheses across various fermentation niches, revealing distinct metabolic strategies that underpin microbial succession and establishing a robust foundation for understanding the biotechnological applications and bioecological roles of bacterial species in stingless bee larval food.
+
+Methods
+
+Sample Collection and Processing
+
+The larval food (LF) sample used in this study was collected from a single beehive of the stingless bee Tetragonisca angustula, maintained in an urban meliponary located in Uberlândia, Minas Gerais, Brazil (October 2018).
+
+Total community DNA for metagenomic analysis was extracted from 200 mg of larval food using the Wizard^(®) Genomic DNA Purification Kit (Promega, USA), following the manufacturer’s protocol for isolation of genomic DNA from Gram-positive bacteria, modified with an additional lysis step using lysozyme (10 mg/mL) to ensure efficient extraction from the complex matrix.
+
+For the culture-dependent approach, 100 µL of larval food was inoculated into 50 mL of LB broth supplemented with 2% acetic acid (pH adjusted to ∼4.5) and incubated anaerobically at 37°C for 5 days. This selective enrichment was originally designed to favor acid-tolerant lactic acid bacteria. However, it resulted in the dominant growth of Bacillus cereus. This outcome, while initially unexpected for a lactic-acid selective medium, is consistent with the known biology of B. cereus.
+
+Purity verification: The purity of the B. cereus CP174498 isolate was confirmed through three standard steps prior to whole-genome sequencing: (i) exhaustive streaking on LB agar to ensure uniform colony morphology; (ii) Gram staining to verify cellular morphology and Gram-positive status; and (iii) amplification and Sanger sequencing of the 16S rRNA gene (primers 27F/1492R) to confirm taxonomic identity.
+
+Genome Assembly and Annotation
+
+The genomes of the two key organisms were obtained through different methods. The complete genome of Acetilactobacillus jinshanensis CP171343 was assembled directly from the shotgun metagenomic data as a Metagenome-Assembled Genome (MAG), [removed qualitative abundance claim per reviewer request]. In contrast, the genome of Bacillus cereus CP174498 was sequenced from the pure isolated colony as described above. The identification of these two organisms across separate sequencing efforts on the same sample is reported here for completeness; we do not interpret this as evidence of temporal or conditional variability.
+
+We assembled both genomes using a hybrid three-stage strategy to ensure high quality and reconcile raw metagenomic output with organism-specific retrieval:
+
+1. Initial De Novo Assembly: Raw sequencing reads were first assembled using SPAdes (v3.15.5) with default parameters to generate an initial set of metagenomic scaffolds. This step corresponds to the assembly method listed in the NCBI submission metadata.
+
+2. Quantitative Reference Selection: To retrieve the complete genome of the target organism from the mixed assembly, we performed BLASTn searches of all scaffolds against the NCBI nucleotide database and computed a Representativeness Score (S_(rep)) for each potential reference genome defined as:
+S_(rep) = ∑_(i ∈ hits)(Identity_(i) × Length_(i))
+This metric prioritizes reference genomes that simultaneously maximize sequence identity and covered length across all alignments. The highest-scoring genome (after normalization) was selected as the reference scaffold.
+
+3. Reference-Guided Refinement: Reads were mapped to the selected reference using SMALT; alignments were processed with SAMtools, and a consensus was called with bcftools (mpileup/consensus) to correct errors and close gaps, yielding the final high-quality genome sequences.
+
+The resulting A. jinshanensis strain ajita genome assembly was classified as near-complete, with a total size of 2,097,977 bp and a remarkably low ambiguous base (N) content of 0.002%, containing only 19 small gaps (2-9 bp) [@UeiraVieira2024]. To assess the quality of this Metagenome-Assembled Genome (MAG), we performed a comprehensive evaluation using CheckM2 v1.1.0 [@Chklovski2023]. The analysis confirmed that this MAG meets the criteria for a high-quality draft genome according to the MIMAG (Minimum Information about a Metagenome-Assembled Genome) standards [@Bowers2017], with a completeness of 98.26% and contamination of only 2.0% (well below the 5% threshold). The genome was assembled into a single contig (N50 = 1,166,929 bp), contains 1,440 predicted genes with a coding density of 81.1%, and has a GC content of 42.0%. To confirm its taxonomic novelty, we performed Average Nucleotide Identity (ANI) and in-silico DNA-DNA Hybridization (dDDH) comparisons against the type strain. The obtained values of ANI (81.42%) and dDDH (25.0%) were well below the species delineation thresholds (<95% and <70%, respectively), confirming it as a distinct, putative novel species [@UeiraVieira2024].
+
+We functionally annotated the assembled genomes using the PANNOTATOR web server [@Santos2013a].
+
+Protein-Protein Interaction Network Inference
+
+We constructed the PPI networks for both studied isolates using the GenPPI software [@Anjos2021; @Silva2025], which predicts interactions based on genomic context methods such as conserved gene neighborhood and phylogenetic profile similarity. The selection of reference genomes for both networks was guided by their close evolutionary relationship to our newly deposited isolates, a critical factor for the accuracy of context-based predictions.
+
+For the A. jinshanensis CP171343 network, we downloaded a set of 129 genomes from the genera Lacticaseibacillus and Lactobacillus (downloaded on 5 Sept., 2024); the complete list of accession numbers is available in the supplementary file Acetilactobacillus_jinshanensis_Genomes_Accessions.txt. To prevent prediction bias from an overly similar reference, the NCBI genome GCA_004359375.1 was excluded. The final prediction was thus conducted using our isolate alongside these 129 reference genomes (130 total), which had a mean count of approximately 1,681 proteins per genome.
+
+For the B. cereus CP174498 network, 136 genomes from the Bacillus genus were initially downloaded (on 23 Dec., 2024). This set was then curated to 84 reference genomes to select those with proteome sizes more comparable to our isolate and to accommodate computational hardware constraints associated with predicting large-scale interactomes. A complete list of accession numbers for this final curated set is provided in the supplementary file Bacillus_cereus_Genomes_Accessions.txt. The network was therefore inferred from 85 genomes in total, a set characterized by a much larger mean proteome size of approximately 4,450 proteins. We visualized and analyzed the resulting networks using Gephi [@Bastian2009].
+
+Rationale for choosing GenPPI
+
+We selected GenPPI as the primary engine for PPI inference because it is a genome-centric, standalone method specifically designed for newly sequenced or understudied organisms, where curated interaction evidence is scarce. A critical limitation of database-dependent tools like STRING is that they require the target genome to be previously indexed; consequently, they cannot directly generate networks for novel isolates or genomes absent from their repository. GenPPI overcomes this by inferring interactions predominantly from conserved genomic contexts (conserved gene neighborhoods and phylogenetic co-occurrences) directly from user-provided sequences, allowing users to control the reference genome panel explicitly. In this study, we tailored those panels to closely related taxa for each isolate and excluded near-identical references to reduce spurious co-occurrence. This design increases specificity and interpretability for our focal bacteria. As reported by [@Silva2025], the machine learning implementation produced 49,077 unique interactions versus 27,041 unique in STRING for the corresponding test organism, with 16,681 interactions overlapping STRING (about 62% of STRING’s predictions). The underlying Random Forest model, which determines whether two proteins from different genomes are similar enough to have their neighborhoods and phylogenetic profiles compared, achieved an average Specificity of ∼90.0% and Sensitivity of ∼57.3% across diverse test sets. This high specificity in the similarity detection phase is prioritized to ensure that only robust ortholog candidates are used for the subsequent genomic context inference, thereby managing the search space and reducing false positives in the final network. While resources such as STRING [@Szklarczyk2019] are widely used, their strongest edges often rely on heterogeneous evidence types (e.g., literature text-mining, cross-organism interolog transfer, and broad co-expression datasets) that can be biased towards model organisms and are less reproducible in de novo settings. For reproducibility and auditability, we prioritized a self-contained pipeline in which all evidence sources, parameters, and the provenance of each predicted edge are explicit and available in our Supplementary Material. STRING remains valuable as an orthogonal reference, but GenPPI is better aligned with the aims and data regime of this work.
+
+GenPPI inference modes and our choice
+
+GenPPI supports two complementary inference modes. (i) A feature-based mode grounded in genomic context, which derives edges from conserved gene neighborhoods, phylogenetic profile co-occurrence, and gene fusion events; this mode yields sparser networks with higher interpretability because evidence is directly tied to conserved genomic organization. In this mode, GenPPI assigns a confidence score (ranging from 0 to 1) to each predicted interaction, reflecting the strength of the genomic signal (e.g., the degree of profile similarity or the frequency of neighborhood conservation across the reference panel) [@Silva2025]. (ii) A machine-learning–augmented mode that incorporates an alignment-free Random Forest similarity component on protein biophysical features and applies the RIS (Reduced Interaction Sampling) strategy to expand candidate similarities safely; this increases recall and typically produces denser networks that are useful for hypothesis generation but may require additional curation. In this study, all reported networks, figures, and quantitative analyses (node/edge counts, as well as topologies) were generated using the feature-based mode, by design, to favor specificity and manual curation. The ML-augmented similarity network ([@Silva2025]) was consulted only as an optional, orthogonal source for hypothesis exploration and is not the basis for claims.
+
+Awareness of false positives and mitigation
+
+Computational PPI inference—particularly genomic-context methods—is susceptible to false positives (FPs), for example, due to operon density, horizontal gene transfer, or correlated annotation across clades. We addressed this in three ways: (i) reference-panel curation to favor close relatives and to exclude overly similar genomes that inflate co-occurrence; (ii) conservative GenPPI thresholds for conserved-neighborhood size and phylogenetic-profile similarity, using the feature-based network as the primary basis for interpretation; and (iii) orthogonal biological plausibility checks, including pathway coherence (i.e., verifying that predicted edges connect enzymes in biochemically compatible processes) and a de-emphasis of trivial within-operon links when drawing biological conclusions. Importantly, our central claims rely first on genome evidence (presence/absence of pathway enzymes), with the PPI network used to contextualize and prioritize hypotheses rather than to assert single binary interactions. The denser, machine learning–augmented similarity network [@Silva2025] was used only for corroboration and hypothesis generation.
+
+Comparison with STRING
+
+STRING is a widely used resource that integrates heterogeneous evidence types (e.g., curated interactions, interolog transfer, co-expression, text-mining) to build organism-level association networks [@Szklarczyk2019]. This breadth is extremely valuable for model organisms and for functional enrichment analyses. However, for newly sequenced or understudied bacteria such as our isolates, evidence can be sparse or biased toward distant taxa. In contrast, GenPPI was designed for de novo, genome-centric inference with explicit control of the reference genome panel and a transparent, auditable provenance of edges.
+
+Importantly, in this study, we did not benchmark our A. jinshanensis and B. cereus networks against STRING because these newly assembled genomes are not represented in STRING. Instead, we rely on the evaluations reported in the GenPPI work itself [@Anjos2021; @Silva2025], which demonstrate that the method achieves substantial overlap with STRING (recovering ∼62% of interactions in test cases) while maintaining high specificity through its Random Forest-based similarity filtering. Thus, GenPPI proposes plausible interactions absent from STRING—these non-overlapping edges are considered prioritized, testable hypotheses rather than automatically deemed false positives. In this work, STRING serves only as an orthogonal conceptual reference; all analyses and interpretations are based on GenPPI’s reproducible, de novo predictions.
+
+Metabolic Pathways and Interaction Analysis
+
+To identify key metabolic pathways, we conducted a literature-guided identification of fermentation processes relevant to the isolation niche, including acetic acid and alcoholic fermentation. We used the enzymes known to participate in these pathways, as well as the Embden-Meyerhof (EMP), Entner-Doudoroff (ED), and phosphoketolase (PK) pathways, as "seed" proteins for our analysis.
+
+We verified the presence of genes encoding these seed enzymes in the assembled genomes of A. jinshanensis and B. cereus using BLAST searches. We subsequently analyzed enzymes confirmed to be present within the Gephi-visualized PPI network. We investigated their direct interactions to understand their functional context and to corroborate metabolic pathway reconstructions.
+
+Identification of High-Centrality Hubs via Outlier Analysis
+
+Instead of selecting a fixed number of top-scoring proteins, we employed a statistical approach with robust outlier criteria to identify significant network hubs [@Dallah2024]. We treated the Bridging Centrality (BriCe) scores of all nodes in the A. jinshanensis network as a distribution. We identified extreme outliers as nodes whose BriCe scores exceeded a threshold defined as the third quartile (Q3) plus three times the interquartile range (IQR), a standard method for detecting extreme values in non-normal distributions. This metric has been successfully applied in similar contexts to identify key integrating proteins in metabolic networks, such as in the study of ANME-2a archaea [@Santos2024aom]. Applied to the A. jinshanensis CP171343 interactome, this yielded 51 extreme hubs (30 proteins, 18 tRNAs, and three rRNAs), fully listed in the Supplementary Material S1. This data-driven approach enabled us to identify a set of proteins and functional RNAs whose topological importance is statistically significant compared to the rest of the interactome. The complete ranked list and annotations are available in the Supplementary Material.
+
+The same statistical outlier analysis was performed independently on the Bridging Centrality (BriCe) scores calculated for the B. cereus CP174498 interactome. This yielded a distinct set of 198 statistically significant hubs, comprising 166 proteins, 25 tRNAs, and seven rRNAs, whose annotations are provided in full in the Supplementary Material S1. To ensure the robustness of our biological conclusions against threshold variations, we also performed a sensitivity analysis using a percentage-based cutoff (top 5% of nodes). This alternative method yielded functionally consistent results, confirming the translation-centric (A. jinshanensis) and sensing-centric (B. cereus) hub profiles regardless of the specific statistical threshold used. We note that the distinct proportions of hubs in these categories (e.g., ∼55% translation-related in A. jinshanensis vs. ∼2% in B. cereus among top 5% nodes) reflect the fundamental difference in genome size and complexity between the streamlined specialist (∼2 Mb) and the versatile generalist (∼5.3 Mb).
+
+Genome-Scale Metabolic Modeling
+
+Genome-scale metabolic models (GEMs) represent a major advance in the metabolic study of organisms [@Gu2019]. Through simulation of existing metabolic fluxes, these models are support the analysis of organism behavior under specified constraints and pathways. ModelSEED is an important tool capable of constructing metabolic models and simulating metabolic fluxes of organisms, based only on submitted genomes that are reannotated in its system [@Seaver2021].
+
+Both studied isolates had their genomes submitted to ModelSEED, underwent reannotation, and were subjected to metabolic modeling. Models were built and simulated using the platform’s standard/default configuration (automatic re-annotation, default gapfilling, and default complete medium) to ensure reproducibility. Once the models were constructed, metabolic fluxes were observed specifically to track secondary metabolism products and xenobiotic degradation pathways. To address the potential arbitrariness of the flux threshold, we performed a sensitivity analysis varying the cutoff from 10⁻⁶ to 10⁻² mmol/gDW/h. The set of active reactions, including the key terpenoid biosynthesis pathways, remained robust across this range, confirming that the observed metabolic enrichments are not artifacts of a specific threshold choice.
+
+Results
+
+Interactome Construction and Topology
+
+The PPI network for A. jinshanensis CP171343 was successfully constructed, resulting in a comprehensive network comprising 1,471 proteins (nodes) and 315,027 predicted interactions (edges), with an average degree of 428 and a network density of 0.291. The network for B. cereus CP174498 consisted of 5,313 nodes and 163,409 edges, exhibiting an average degree of 61.5 and a density of 0.012. Despite these differences in density, the degree distribution of both networks exhibits a power-law-like behavior consistent with a scale-free topology, characterized by a large number of nodes with few connections and a long tail of highly connected hubs, which is a hallmark of biological protein interaction networks. The comprehensive bioinformatics pipeline employed to generate and analyze these complex networks, beginning from sample collection through to final data interpretation, is detailed in Figure 1.
+
+Methodological workflow for the systems biology analysis of Acetilactobacillus jinshanensis and Bacillus cereus. The diagram outlines the four major stages of the study: (1) Sample Collection, (2) Genome Assembly and Annotation, (3) Systems Biology Analysis, and (4) Results Synthesis. Key bioinformatics tools (e.g., BLASTn, SMALT, PANNOTATOR, GenPPI, ModelSEED) and data flows are indicated, including the deposition of sequenced genomes to NCBI GenBank and the subsequent use of publicly available genomes for PPI network inference. The legend clarifies the meaning of the shapes used to represent different components of the workflow.
+Metabolic Pathway Reconstruction
+
+Our detailed genomic analysis identified genes consistent with a specialized heterolactic fermentation pathway in A. jinshanensis. We found the key gene for phosphoketolase (AJITA_01356), along with the complete downstream pathways for producing lactate and ethanol, the latter supported by our identification of phosphate acetyltransferase (pta, AJITA_01213). In contrast, we did not find the gene for acetate kinase (ackA), which is required for the canonical production of acetate. As summarized in Table 1, our analysis also confirmed the absence of key enzymes for the upper EMP pathway, purely alcoholic fermentation, and the Entner-Doudoroff pathway.
+
+In contrast, our BLAST searches in the B. cereus CP174498 genome indicated the presence of genes encoding enzymes associated with fermentation (including a ModelSEED-predicted pyruvate decarboxylase activity, likely attributed to a promiscuous indolepyruvate decarboxylase, supported by the presence of specific Pyruvate Decarboxylase domains, PANTHER PTHR43452, E-value 1.7 × 10⁻¹⁸³) and a complete EMP pathway, but not clear evidence for heterolactic or acetic fermentation pathways.
+
+ Step Enzyme Gene Symbol (Common) A. jinshanensis Gene ID(s) / Status EC Number 
+ Step Enzyme Gene Symbol (Common) A. jinshanensis Gene ID(s) / Status EC Number 
+ Continued on next page 
+ Hexokinase / Glucokinase hk / glk AJITA_01053 .1.2 
+ 2 Glucose-6-phosphate isomerase pgi AJITA_00870 .1.9 
+ 3 Phosphofructokinase-1 pfkA Not Found .1.11 
+ 4 Fructose-bisphosphate aldolase fba Not Found .2.13 
+ 5 Triose-phosphate isomerase tpiA AJITA_01219 .1.1 
+ 6 Glyceraldehyde-3-phosphate dehydrogenase gapA AJITA_01221 .1.12 
+ 7 Phosphoglycerate kinase pgk AJITA_01220 .2.3 
+ 8 Phosphoglycerate mutase gpmA AJITA_00124, etc. .2.11 
+ 9 Enolase (Phosphopyruvate hydratase) eno AJITA_00705 .1.11 
+ 10 Pyruvate kinase pyk AJITA_00435, AJITA_01101 .1.40 
+ Hexokinase / Glucokinase hk / glk AJITA_01053 .1.2 
+ 2 Glucose-6-phosphate dehydrogenase zwf AJITA_01371 .1.49 
+ 3 -phosphogluconolactonase pgl AJITA_00175, AJITA_00784 .1.31 
+ 4 -phosphogluconate dehydrogenase gnd AJITA_01372, AJITA_01375 .1.44 
+ 5 Ribulose-5-phosphate 3-epimerase rpe AJITA_01024 .3.1 
+ Phosphoketolase xpk / fpk AJITA_01356 .2.22 
+ -11 All Present - 
+ 12 Lactate dehydrogenase ldh AJITA_00889, AJITA_00362 .1.27/28 
+ 13a Phosphate acetyltransferase pta AJITA_01213 2.3.1.8 
+ 13b Acetate kinase ackA Not Found .2.1 
+ 14 Alcohol/Acetaldehyde dehydrogenase adh / adhE AJITA_00674, etc. .1.1 
+
+: (Continued) Comprehensive genomic inventory of metabolic pathways.
+
+Interactome Analysis Suggests a Dual Metabolic Pathway
+
+To investigate the functional integration between the EMP and PKP pathways, we constructed and visualized the sub-network of interactions among all their constituent enzymes. The resulting graph (Figure 2) shows a densely connected module among enzymes from both pathways, consistent with operation as an integrated metabolic unit. We treat this as a mechanistic hypothesis derived from network topology rather than a confirmed physiological interaction. Our analysis highlighted a key structural and functional feature: the role of glucokinase (AJITA_01053) as a shared component fundamental to both pathways. In our visualization, we positioned this shared enzyme (colored purple) in the center, where it graphically bridges enzymes exclusive to the PKP pathway (inner green circle) and those exclusive to the EMP pathway (outer red circle). Its status as the dominant interaction hub is evident from its high degree of connectivity. This central position is biologically significant, as glucokinase catalyzes the first committed step for glucose entering either pathway, positioning it as a potential critical point for metabolic flux control.
+
+Interactome of enzymes from the EMP and PKP pathways in A. jinshanensis, showing all predicted interactions between enzymes of different pathways (no score cutoff applied). Nodes are arranged in concentric circles. The outer red circle represents enzymes exclusive to the EMP pathway; the inner green circle represents enzymes exclusive to the PKP pathway; and the central purple node (AJITA_01053) is a shared component common to both. Node labels display only gene IDs; see Table 1 for a mapping from IDs to enzyme names.
+Statistical Outlier Analysis Identifies a Core Cellular Growth Hub
+
+To identify the most critical integrating nodes in the A. jinshanensis interactome, we performed a statistical outlier analysis on the Bridging Centrality (BriCe) scores of all proteins. This method identified 51 nodes—comprising 30 proteins, 18 tRNAs, and three rRNAs—whose centrality scores were extreme outliers (BriCe > Q3 + 3 × IQR), suggesting they form a super-hub of exceptional topological importance (see Supplementary Material S2 (ZIP)) [@Dallah2024]. A functional analysis of these nodes revealed a striking narrative centered on the core machinery of cellular growth and regulation.
+
+Hypothesis 1: The Centrality of the Translation Machinery
+
+The most prominent group of high-centrality nodes consists of components essential for protein synthesis. This group includes not only three rRNAs and 18 tRNAs but also two ribosomal proteins (50S L23 and 30S S20) and an RluA family pseudouridine synthase responsible for RNA modification. The massive representation of the translation apparatus as the primary structural hub of the entire interactome is consistent with a systems-level pattern that the network may be optimized for rapid protein production [@Kratz2024; @Williams2025]. This finding is consistent with a "fast-growth" ecological strategy, where the ability to synthesize proteins quickly is the main driver of competitive fitness in a nutrient-rich environment [@Sezen2022].
+
+Hypothesis 2: The Methionine/SAM Nexus as a Key Metabolic Control Point
+
+A second, highly cohesive group of protein hubs is centered around the metabolism of methionine. This cluster includes membrane-bound amino acid permeases for substrate acquisition, a cytoplasmic methionine ABC transporter component, the key cytoplasmic enzyme methionine adenosyltransferase (MetK), and two cytoplasmic SAM-dependent methyltransferases. This delineates a complete import-to-function pathway where membrane-level hubs feed a central cytoplasmic processing core that utilizes its product, S-adenosylmethionine (SAM). MetK is a classic metabolic hub, sitting at the crossroads of protein synthesis (via methionine) and cellular regulation (by producing SAM, the universal methyl donor) [@Lee2023; @Palmieri2022]. The statistical significance of this entire pathway—from transport to final enzymatic function—as a network hub suggests that the flow of methionine and methyl groups is a critical point of metabolic control in A. jinshanensis [@Rudenko2025].
+
+Hypothesis 3: A Discovery Engine for the "Genomic Dark Matter"
+
+Approximately 40% (12 out of 30) of the identified protein hubs are annotated as hypothetical or as proteins with domains of unknown function (DUFs). While the identification of well-known hubs like ribosomal proteins validates our analytical approach, these uncharacterized nodes represent the functional "dark matter" of the interactome. Their statistically significant position as key network integrators strongly suggests they play crucial, undiscovered roles in coordinating cellular processes [@Goodacre2013; @Buttigieg2013]. These proteins, particularly the larger ones like AJITA_01132 and AJITA_01235, are now high-priority targets for future experimental validation to uncover novel biological functions [@Luo2024].
+
+The identification of the Methionine/SAM nexus as a central hub is significant for understanding the metabolic potential of this organism, as S-adenosylmethionine (SAM) is a critical precursor and cofactor in the biosynthesis of many complex secondary metabolites. This outlier set, together with the full ranked list of nodes by BriCe and accompanying annotations, is provided as Supplementary Material, including the file Acetilactobacillus_jinshanensis_nodes_sortby_BriCe.tsv.
+
+The B. cereus Hub Reveals an Adaptive Pioneer Strategy
+
+In contrast to the growth-centric hub pattern of A. jinshanensis, the outlier analysis of the B. cereus interactome identified a larger and functionally diverse set of 198 network hubs. At the network level, the functional categories represented by these hubs (e.g., sensing, transport, stress response, secretion) are consistent with a pioneer-like configuration—that is, an architecture compatible with environmental monitoring and potential niche modification. A summary of these hubs is presented in the Supplementary Material S2 (ZIP), with the full list available there.
+
+Hypothesis 1: A Network Primed for Environmental Surveillance and Stress Response
+
+This architecture, rich in hubs located at the cell’s periphery—including membrane-bound sensor kinases and transporters, as well as potentially surface-exposed (PSE) substrate-binding proteins—suggests an interactome primed not for streamlined growth, but for robust surveillance of a dynamic environment. The dominant functional signature among the B. cereus hubs are related to environmental sensing and adaptation. This group is replete with transcriptional regulators (CtsR, TetR/AcrR, PadR families), two-component signal transduction systems (histidine kinases, response regulators), and defense mechanisms (antitoxins, immunity proteins, DNA repair enzymes, catalase) [@Duport2016; @Brown2022]. Furthermore, numerous transporters for a wide array of substrates (ions, amino acids, drugs) were identified as central hubs [@How2025; @Davies2021]. This architecture suggests an interactome primed not for streamlined growth, but for robust surveillance and rapid physiological reprogramming in response to environmental cues and stresses, a key trait for a successful early colonizer [@Manktelow2021].
+
+Hypothesis 2: Equipped for Niche Construction and Competition
+
+The identification of multiple secreted proteins as hubs, such as a beta-channel forming cytolysin (cytK2), a beta-lactamase (bla_3), and a lytic polysaccharide monooxygenase, further suggests a strategy of active competition and niche modification. A secondary theme among the hubs points to an active role in shaping the niche. Key nodes include enzymes for degrading complex polysaccharides (lytic polysaccharide monooxygenase, glycosyl hydrolase), which would be critical for breaking down plant-based material like pollen in the initial stages of fermentation. The identification of a cytolysin (cytK2) and secretion system components as hubs further suggests a strategy of active competition, potentially to eliminate other microbes and secure resources [@Nagel2024; @Glasset2021; @Berlemont2023; @Ouertani2018; @Kang2014].
+
+The Role of the Translation Machinery: A Telling Contrast
+
+While the translation machinery (rRNAs, tRNAs, and one inhibitor) is also topologically important in B. cereus, it does not dominate the hub landscape as it does in A. jinshanensis. Instead, it shares centrality with a vast suite of sensory and adaptive proteins. This architectural difference is telling: it suggests a strategic tradeoff in B. cereus between investing in growth and maintaining a state of high alert and adaptability [@Zhu2023; @Farookhi2024]. This contrasts sharply with the highly specialized, translation-focused network of A. jinshanensis, which appears to have jettisoned broad adaptive capabilities in favor of maximizing its rate of biomass production [@Hu2020; @Zafar2023; @Calvet2020].
+
+Metabolic Flux Potential Analysis
+
+The reconstructed models predicted growth rates of 1.96 h⁻¹ for A. jinshanensis and 23.50 h⁻¹ for B. cereus under standard constraints.
+
+Metabolic flux analysis revealed that both studied isolates (A. jinshanensis CP171343 and B. cereus CP174498) show model-predicted metabolic flows for benzoate degradation. Aromatic compounds such as benzoates are examples of environmental pollutants typically caused by human action. Their presence is related to industrial activities, deposition of petroleum derivatives, and in species habitats [@Seo2009; @Li2024]. Bioremediation strategies have been presented and widely tested in recent years.
+
+The fact that both studied isolates presented these degradation pathways raises hypotheses about a potential environmental adaptation of these specific bacterial strains to the modern environment. Benzoate is a pollutant capable of causing relevant bioecological imbalances. Its removal from environments would be a relevant bioecological strategy for homeostasis of the hive system. New studies are needed, but these analyses suggest a potential symbiotic relationship that could help keep hives less affected by modern life. It is important to note that these predictions are based on the presence of genomic pathways and model simulations (ModelSEED), which use gap-filling to ensure model solvability. Therefore, these findings should be interpreted as predictive capabilities that require experimental verification.
+
+Multipanel flux activation and enrichment for model-predicted reactions under default ModelSEED conditions. Panel (A): Bacillus cereus CP174498; Panel (B): Acetilactobacillus jinshanensis CP171343. Bars show per-category activation rate ( flux  ≥ 10−3) with 95% Wilson confidence intervals and enrichment relative to background. Fisher’s exact p-values indicate statistical support; terpenoid precursor pathways are significantly enriched, benzoate degradation is active in both organisms, and xylene-related annotations are active without enrichment.
+To quantify relative activation, we computed per-category activation rates and enrichment against the background (outside-category) using a threshold of flux  ≥ 10⁻³. In the studied B. cereus isolate (CP174498), terpenoid precursor reactions were significantly enriched (31/56 active; 55.4%; enrichment ≈ 2.15×; Fisher’s exact p = 7.9 × 10⁻⁶). Benzoate-associated reactions showed moderate activation (5/13; 38.5%; enrichment ≈ 1.42×; p = 0.356). Xylene-related reactions (with expanded synonyms) showed activity (18/80; 22.5%) but no enrichment relative to background (enrichment ≈ 0.82×; p = 0.366). These results support the prominence of isoprenoid/terpenoid metabolism in this isolate under the modeled conditions. Similarly, in A. jinshanensis (CP171343), terpenoid precursor reactions were strongly activated (27/31; 87.10%), and benzoate-related reactions showed full activation within the annotated set (5/5; 100.00%). Background activation was 42.86% across the model. No reactions were annotated to xylene degradation in either model; thus, this category was omitted from the figure.
+
+Metabolic flux analysis also indicated that both studied isolates possess pathways for producing terpenoid precursors. These substances are known to be related to relevant biopharmacological properties such as malaria and cancer treatment [@Helfrich2019]. These results suggest that these studied isolates could contribute to the production of relevant bioproducts in larval food, pending experimental validation. In the B. cereus isolate, enrichment-based quantification highlights isoprenoid/terpenoid precursor pathways as disproportionately active relative to the network background, reinforcing the biotechnological relevance of these routes under the modeled conditions. These findings help create a specific profile of the bacterial strains responsible for this production, leading to larger-scale production processes.
+
+Various secondary metabolites were observed in small quantities in the metabolic flux predicted by ModelSEED. However, it is crucial to contextualize this finding. Specialized genomic analysis of A. jinshanensis CP171343 with tools like antiSMASH has confirmed the absence of biosynthetic gene clusters for secondary metabolites, including antibiotics. This genomic evidence strongly reinforces its proposed ecological role as a "fast-growth" specialist with a streamlined genome, optimized for rapid fermentation rather than chemical competition. Any minor flux predicted by ModelSEED in generic secondary metabolism routes for this organism should be interpreted with caution. In contrast, the potential for secondary metabolite production in B. cereus, a genus well-known for it, aligns perfectly with its role as an adaptive "pioneer". As these are secondary metabolites, a more accurate analysis would be to simulate the metabolic model using the larval food environment as culture medium, which has specific characteristics responsible for intensifying metabolic pathways typically associated with those medium conditions. However, these analyses already provide a good overview, indicating that the studied isolates have potential relevance in understanding the composition of larval food and its properties.
+
+These flux balance analysis findings provide metabolic support for the distinct ecological roles inferred from the network topology. The significant enrichment of terpenoid precursor pathways in B. cereus is consistent with a "pioneer" strategy, as terpenoids can function as signaling molecules, antimicrobials, or surfactants to modify the niche [@Avalos2021]. Similarly, the activation of benzoate degradation pathways in both organisms, but particularly in a versatile generalist like B. cereus, aligns with a niche-opening function, where the ability to detoxify or utilize complex aromatic compounds provides a competitive advantage in the early stages of colonization [@Godinez2024; @Pyankova2022]. For A. jinshanensis, the high activation of these pathways may reflect its role in the later stages, processing metabolites left by the primary community [@Brunner2023; @Joseph2024].
+
+Discussion
+
+Our work provides in silico support for a complementary partnership between B. cereus and A. jinshanensis across distinct environments. We reinterpret the observed temporal pattern through the lens of facilitation and niche construction rather than classical competitive succession [@Connell1977; @OdlingSmee2003; @Fukami2015; @Widder2016]. In this framework, early-arriving taxa condition the habitat and alter resource accessibility for subsequent colonizers (priority effects). Thus, apparent late-stage "competitiveness" of A. jinshanensis emerges from specialization to a conditioned niche, not from direct competitive superiority. Through genome, interactome, and flux analyses, we outline molecular features consistent with this division of labor: a pioneer, niche-engineering strategy in B. cereus and a fast-growth, high-translation strategy in A. jinshanensis.
+
+Our work suggests, at the in silico level, an independent line of support for the ecological synergy between B. cereus and A. jinshanensis originally hypothesized from observational studies in vinegar fermentation [@Liu2023; @Xu2024]. By indicating complementary metabolic capabilities at the systems level in a completely different biological system—stingless bee larval food—our findings suggest that this partnership may represent a fundamental ecological strategy that transcends specific fermentation environments. Through comprehensive genome and interactome analysis, we propose potential molecular mechanisms underlying this synergy, providing mechanistic insights that were previously inaccessible through observational approaches. Our results suggest that B. cereus is genetically equipped for rapid fermentation (e.g., mixed-acid or lactate), which may help explain its observed dominance in early fermentation stages, while A. jinshanensis possesses the machinery for heterolactic fermentation, consistent with its role in later stages. This metabolic specialization provides a functional basis for their temporal partitioning.
+
+The predicted primary metabolic role of A. jinshanensis in carbohydrate metabolism appears to be heterolactic fermentation. Our findings are consistent with the observed succession of microbial communities during fermentation, where A. jinshanensis becomes dominant in the later phase [@Xu2024]. Our genomic findings offer a plausible molecular basis for this metabolic profile; we identified the complete pathways for lactate and ethanol production, positioning A. jinshanensis as a specialist in generating these products, which is consistent with previous ecological observations [@Xu2011].
+
+A key in silico finding is the computational prediction of a dual glucose oxidation strategy in A. jinshanensis, suggested by genomic content and the predicted PPI network. The interaction map (Figure 2) suggests the integration of the phosphoketolase pathway with the lower part of the EMP pathway. This metabolic flexibility, previously described in other lactobacilli [@Arskold2008], may allow the organism to channel carbon efficiently. Furthermore, our finding that this species possesses the pta gene but appears to lack ackA indicates a metabolic strategy that prioritizes the regeneration of NAD+ via ethanol production over the additional ATP gain from acetate formation, a common adaptation for fermentation in anaerobic, carbohydrate-rich environments. Our interactome analysis elevates this concept by revealing that glucokinase (AJITA_01053) is not merely an EMP enzyme that interacts with the PKP; it is a foundational, shared component of both pathways. This shared status, visualized by its central, purple-colored position in our network model (Figure 2), suggests that this node may act as a primary control point for directing carbon into either heterolactic fermentation for redox balance or the lower EMP for ATP production. Regulation of this single enzyme’s activity or expression is the key mechanism by which A. jinshanensis adapts its metabolism to changing environmental conditions.
+
+Intriguingly, our ability to assemble a complete genome for A. jinshanensis directly from the metagenomic data suggests that it was present at a high relative abundance within the larval food microbial community. We propose that its specialized metabolic strategy offers a plausible explanation for this ecological success. In a nutrient-rich, anaerobic environment like larval food, a "fast-growth, lower-yield" fermentation strategy that prioritizes rapid glycolytic flux can be a decisive selection advantage. Complementing this metabolic view, our outlier analysis of Bridging Centrality revealed a translation-centered core growth hub dominated by rRNAs, tRNAs, ribosomal proteins, and RNA-modifying enzymes. This organization indicates that the interactome of A. jinshanensis is structurally optimized for mass protein production, providing a topological validation of the fast-growth hypothesis. In parallel, the prominence of a methionine/SAM control axis (transporters, MetK, SAM-dependent methyltransferases) among extreme hubs suggests a regulatory nexus that may coordinate carbon allocation between growth and secondary metabolism. Together, these findings align the architectural principles of the network with the ecological strategy inferred from metabolism and flux predictions. By channeling carbon towards ethanol, A. jinshanensis can rapidly regenerate the NAD+ required to process sugars quickly, potentially outcompeting microbes that rely on slower, more efficient respiratory pathways. This rapid proliferation would directly translate to a higher proportion of its DNA in the metagenome. Furthermore, the production of ethanol may also serve to inhibit the growth of competitors, thereby reinforcing its dominance in the niche. We therefore hypothesize that the genomic blueprint for this ethanol-centric fermentation is a key adaptive trait driving the high abundance of A. jinshanensis in this ecosystem.
+
+It is worth noting that high network density is not unique to GenPPI but is a characteristic of comprehensive computational prediction databases. For instance, the STRING database, often used as a gold standard, contains nearly 6 million interactions for the human proteome in its ‘complete’ network [@Szklarczyk2019]. Similarly, bacterial interactomes can be extremely dense when capturing the full functional potential: the network for Mycobacterium tuberculosis H37Rv in STRING exceeds 300,000 interactions [@Szklarczyk2019], and the integrated SynechoNET database for Synechocystis sp. PCC 6803 reports over 109,000 interactions [@Saha2016]. Other examples include Pseudomonas aeruginosa with over 54,000 predicted interactions [@Zhang2012] and model organisms like E. coli, which can exhibit hundreds of thousands of interactions depending on confidence thresholds. Thus, the density observed in our GenPPI networks is consistent with the scale of ab initio computational inference.
+
+The protein interactions predicted by GenPPI that are not present in the STRING database do not necessarily imply the non-existence of these interactions. The correctly implemented algorithms for conserved phylogenetic profile and gene neighborhood traits speak in favor of a high probability that these interactions occur. Crucially, despite this density, our networks maintain a robust power-law degree distribution, ensuring that the topological identity of key hubs remains statistically distinguishable. As demonstrated in the GenPPI methodology [@Anjos2021; @Silva2025], the Reduced Interaction Sampling (RIS) algorithm ensures that this topology is driven by significant genomic context patterns rather than noise.
+
+A deeper analysis of the network hubs provides a topological basis for these distinct ecological roles. While various centrality metrics can identify important nodes, most (such as Degree or Betweenness Centrality) primarily highlight the most connected nodes within the network core, which can be obscured in dense networks. In contrast, Bridging Centrality (BriCe) is specifically designed to identify nodes that function as crucial connectors between distinct functional modules. It is the collective functional and spatial identity of these bridging nodes that we propose can reveal the organism’s overarching operational priorities.
+
+Both organisms exhibited statistically significant enrichment of flux towards terpenoid precursors; this finding requires careful interpretation. One could argue that, since the underlying methylerythritol phosphate (MEP) pathway is ubiquitous and essential for processes such as cell wall and membrane synthesis, high flux is common among rapidly growing bacteria. We acknowledge the fundamental role of the pathway. However, our analysis moves beyond its mere presence. The key insight of our study is not the flux itself, but the compelling alignment of this metabolic investment with other, independent lines of evidence.
+
+In A. jinshanensis, this massive investment in precursors complements its specialist profile. The organism shows a translation-centric interactome and a genome streamlined by the absence of secondary metabolite pathways. This pattern suggests the flux is directed inwards, fueling growth machinery. Conversely, in B. cereus, the same investment aligns with its pioneer profile, which features an environmentally aware interactome and genomic potential to produce secreted effectors. Here, the flux appears to be directed outward, facilitating niche modification and competition. Our findings thus demonstrate that a single, fundamental metabolic pathway can support two starkly different ecological strategies.
+
+This perspective highlights an architectural dichotomy between our two isolates. The interactome of A. jinshanensis is overwhelmingly dominated by a cytoplasm-centric super-hub of translation machinery. The statistical prominence of these internal components as the primary bridges suggests their network is fundamentally organized to coordinate all cellular processes in service of a single task: the mass production of proteins. This is the hallmark of a "fast-growth" specialist. Conversely, the bridging hubs of the B. cereus interactome is functionally and spatially diverse, with a significant enrichment of hubs located in the membrane or secreted to the extracellular space. Its network appears architecturally primed for adaptability, with regulatory proteins, sensory kinases, and secreted effectors acting as the key bridges that translate external signals into coordinated, multi-modular responses. This is consistent with the strategy of a "pioneer" generalist. Therefore, we propose a model where the network topology, specifically through the lens of its bridging nodes, is a direct reflection of partitioned ecological roles. While based on a limited sample, these findings raise the intriguing hypothesis that a comparative analysis of bridging hubs could serve as a powerful framework for deciphering the functional "lifestyles" of microorganisms within an ecosystem.
+
+Our experimental outcome—specifically, the isolation of B. cereus but not A. jinshanensis under standard enrichment conditions—provides unintended but informative in vitro support for a facilitation-based mechanism. We characterize B. cereus as a pioneer and niche engineer that senses and modifies fresh environments via secreted enzymes and stress/adaptation systems, increasing the availability of simple metabolites from complex substrates [@Duport2016; @Berlemont2023; @Ouertani2018; @Kang2014]. In contrast, A. jinshanensis is a fast-growth specialist adapted to an established, nutrient-conditioned niche (late fermentation). Its failure to dominate in a fresh, unconditioned medium (LB) is therefore expected: its specialization depends on prior niche construction, resolving the apparent contradiction between a fast-growth profile and late-stage dominance [@Arskold2008; @Goldford2018; @Fukami2015].
+
+While we cannot generalize this single isolation outcome to all contexts, taken together with the systems-level patterns (interactome topology and flux predictions), it is consistent with a case study in which the successor relies on prior environmental modifications by the pioneer. In raw, unconditioned substrates, B. cereus plausibly prevails initially due to its resilience and environmental sensing/secretion systems; by contrast, A. jinshanensis appears to perform best once metabolites are preprocessed and available at higher effective flux. We therefore advance a testable hypothesis: the late-stage dominance of A. jinshanensis reflects a facilitation-dependent specialization, whereas the early presence of B. cereus reflects niche construction and initial competitive advantage under crude conditions. Future targeted co-culture experiments under staged conditioning should discriminate between these alternatives and quantify effect sizes.
+
+Study Limitations and Future Perspectives
+
+This work is based on a single biological sample and one cultured isolate per focal species (N = 1 for B. cereus and N = 1 for A. jinshanensis). Accordingly, our inferences should be interpreted as a case study and a mechanistic framework for hypothesis generation rather than as population-level generalizations. Confirmatory experiments using multiple isolates drawn from diverse sources and environments will be necessary to assess the prevalence and strength of the proposed patterns across contexts.
+
+It is essential to acknowledge the limitations inherent in the purely in silico approach of this study. The protein-protein interaction networks and metabolic pathways were inferred from genomic data, and although based on robust methods, they represent a map of functional potential that awaits experimental validation. The presence of a gene in the genome does not unequivocally guarantee its expression or the corresponding protein’s functionality under the specific ecological conditions of the larval food. Therefore, our conclusions should be interpreted as robust hypotheses grounded in strong genomic and systems biology evidence.
+
+The prediction of a dual glucose metabolism pathway in A. jinshanensis, for instance, while strongly supported by the interactome analysis, remains a functional model.
+
+To address these limitations and experimentally validate the hypotheses generated in this work, several future approaches are crucial:
+
+- Gene Expression Analyses (Transcriptomics): Using RNA-Seq on samples collected at different fermentation stages would allow verification of whether the genes for alcoholic fermentation in B. cereus and heterolactic fermentation in A. jinshanensis are indeed differentially expressed over time, thereby validating the proposed metabolic succession.
+
+- Metabolomic Analyses: The quantification of extracellular metabolites (such as ethanol, lactate, and acetate) via techniques like HPLC or mass spectrometry (GC-MS) in co-cultures of the two species would provide direct evidence of their complementary metabolic contributions.
+
+- Genetic Engineering and Biochemical Assays: Definitive functional validation could be achieved by creating knockout mutants for key genes. Specifically, the predicted pyruvate decarboxylase activity in B. cereus (attributed to the indolepyruvate decarboxylase candidate ACI5QN_02291) requires enzymatic assays to confirm whether it exhibits promiscuous activity towards pyruvate, as inferred by the metabolic model. Similarly, the phosphoketolase pathway in A. jinshanensis should be validated via gene deletion.
+
+Therefore, this study should be viewed not as an endpoint, but as a detailed roadmap that provides a molecular foundation and generates testable hypotheses, directing future experimental research to unravel the complex synergy between these microorganisms fully.
+
+Conclusion
+
+This study was conducted on a single biological sample and one cultured isolate per species (N = 1 for each focal organism). As such, the results should be viewed as a case study and a mechanistic framework for hypothesis generation rather than a generalized statement about species-wide behavior. Verification with multiple isolates from different sources and environments will be required to determine whether the proposed facilitation patterns recur across contexts and to quantify their effect sizes.
+
+This work illustrates the potential of combining interactome analysis with genome-scale metabolic modeling to provide an in silico perspective on ecological hypotheses across different biological systems. By constructing comprehensive PPI networks for Acetilactobacillus jinshanensis and Bacillus cereus, we present computational evidence consistent with the Liu/Xu hypothesis in stingless bee larval food—a completely different fermentation environment from the original vinegar studies. Our analysis revealed distinct, non-overlapping fermentative metabolisms that help explain their temporal succession, while providing novel mechanistic insights, including computational evidence for a dual glucose oxidation pathway in A. jinshanensis that was not detectable through observational studies alone.
+
+The combined interactome-based and metabolic modeling approach represents a significant methodological advance over previous observational studies, providing molecular resolution that enables mechanistic understanding of ecological patterns. This cross-environment, computational analysis is consistent with the Liu/Xu hypothesis and may help generalize it, while illustrating one approach for testing ecological theories using systems biology. This cross-environment, computational analysis is consistent with the Liu/Xu hypothesis and may help generalize it, while illustrating one approach for testing ecological theories using systems biology. The ModelSEED analysis provided further metabolic context, indicating potential for benzoate degradation in both isolates—suggesting novel bioremediation applications—while highlighting secondary metabolism routes primarily consistent with the versatile, "pioneer" role of B. cereus. The confirmed absence of such pathways in A. jinshanensis reinforces its "fast-growth" specialist strategy. By revealing these distinct biotechnological potentials, this study opens new avenues for experimental research. The potential to assess ecological hypotheses through integrated molecular networks and metabolic flux analysis suggests a useful framework for future investigations into microbial ecosystem dynamics and their biotechnological applications.
+
+Author Contributions
+
+Natanael Borges de Avila: Formal analysis, Investigation, Visualization, Writing – original draft. Ana Carolina Costa Santos: Investigation, Resources, Writing – review & editing. Joberth Lee Correa: Investigation, Resources, Writing – review & editing. Ana Maria Bonetti: Supervision, Writing – review & editing. Carlos Ueira-Vieira: Supervision, Writing – review & editing. Anderson Rodrigues dos Santos: Conceptualization, Methodology, Software, Supervision, Project administration, Writing – review & editing.
+
+Declarations
+
+Ethics approval and consent to participate
+
+Not applicable.
+
+Consent for publication
+
+Not applicable.
+
+Availability of data and materials
+
+The complete genome sequences for Acetilactobacillus jinshanensis (GenBank: CP171343) and Bacillus cereus (GenBank: CP174498) are publicly available at NCBI. While the SBML files are fully compliant with the SBML L3 FBC v2 standard, we recommend using COBRA-based toolchains (e.g., the provided Python scripts) for reproduction of growth rates and flux predictions. Some kinetic-focused GUI tools may not automatically expose FBA tasks for large-scale metabolic models due to specific XML-parsing requirements for kinetic laws; therefore, we provide command-line scripts that directly load SBML, set (or infer) the biomass objective, and optimize the model using COBRApy. All PPI-related resources, analysis scripts, NCBI genome accessions, BriCe rankings, SBML models (XML), figure source files (DOT/Gephi), and companion analysis scripts are included in Supplementary Material S2 (ZIP). For convenience, a minimal runner (run_sbml_model.py) is provided to execute the SBML models directly and reproduce the predicted growth rates (see script help for examples using both A. jinshanensis and B. cereus).
+
+Competing Interests
+
+The authors declare that they have no competing interests.
+
+Funding
+
+This project was funded by the Research Support Foundation of the State of Minas Gerais (FAPEMIG APQ-02766-17, APQ-00269-22); National Council of Scientific and Technological Development (CNPq grant number 303667/2021-4); and Coordination for the Improvement of Higher Education Personnel (CAPES - Finance Code 001).
+
+Acknowledgements
+
+This work was supported by institutional resources from the Federal University of Uberlândia (UFU).
+
+10 url urlprefix href
+
+G. A. Pavlopoulos, et al., Using graph theory to analyze biological networks, BioData Mining 4 (1) (2011) 1–27.
+
+T. Berggård, S. Linse, P. James, Methods for the detection and analysis of protein-protein interactions, PROTEOMICS 7 (16) (2007) 2833–2842.
+
+A. C. C. Santos, Microbioma do alimento larval de abelhas sem ferrão: diversidade e potencial biotecnológico, Ph.D. thesis, Universidade Federal de Uberlândia, Uberlândia, MG, doutorado em Genética e Bioquímica. Disponível em: https://repositorio.ufu.br/handle/123456789/35587. DOI: http://doi.org/10.14393/ufu.te.2022.439 (2022).
+
+A. Vásquez, et al., Symbionts as major modulators of insect health: Lactic acid bacteria and honeybees, PLOS ONE 7 (3) (2012) e33188.
+
+M. A. I. Al-Hatamleh, et al., Antioxidant-based medicinal properties of stingless bee products: Recent progress and future directions, Biomolecules 10 (6) (2020) 923.
+
+S. M. Mohammad, N. K. Mahmud-Ab-Rashid, N. Zawawi, Probiotic properties of bacteria isolated from bee bread of stingless bee heterotrigona itama, Journal of Apicultural Research 60 (1) (2020) 172–187.
+
+J. Liu, et al., Exploring the ecological interactions of bacillus and their contribution to characteristic aroma components in zhenjiang aromatic vinegar, Food Bioscience 54 (2023) 102900.
+
+L. Xu, et al., Predicting the multispecies solid-state vinegar fermentation process using single-cell raman spectroscopy combined with machine learning, LWT 192 (2024) 115708.
+
+A. C. C. Santos, et al., Antimicrobial activity of supernatants produced by bacteria isolated from brazilian stingless bee’s larval food, BMC Microbiology 22 (1) (2022) 1–9.
+
+W. F. Anjos, et al., Genppi: standalone software for creating protein interaction networks from genomes, BMC Bioinformatics 22 (1) (2021) 1–26.
+
+A. Silva, C. Marquez, I. Godoy, L. Silva, M. Prado, M. Beppler, N. Avila, B. Travençolo, A. R. Santos, Improving protein interaction prediction in GenPPi: a novel interaction sampling approach preserving network topology, BMC Bioinformatics 26 (1) (2025) 296. doi:10.1186/s12859-025-06325-8.
+URL https://doi.org/10.1186/s12859-025-06325-8
+
+C. Ueira-Vieira, et al., Complete genome sequence of acetilactobacillus jinshanensis strain cp171343 isolated from stingless bee larval food, Microbiology Resource AnnouncementsIn press (2024).
+
+A. Chklovski, D. Parks, B. Woodcroft, G. Tyson, Checkm2: a rapid, scalable and accurate tool for assessing microbial genome quality using machine learning, Nature Methods 20 (8) (2023) 1203–1212. doi:10.1038/s41592-023-01940-w.
+
+R. Bowers, N. Kyrpides, R. Stepanauskas, M. Harmon-Smith, D. Doud, T. Reddy, et al., Minimum information about a single amplified genome (misag) and a metagenome-assembled genome (mimag) of bacteria and archaea, Nature Biotechnology 35 (8) (2017) 725–731. doi:10.1038/nbt.3893.
+
+A. R. Santos, et al., Pannotator: an automated tool for annotation of pan-genomes, Genetics and molecular research : GMR 12 (3) (2013) 2982–2989.
+
+M. Bastian, S. Heymann, M. Jacomy, Gephi: An open source software for exploring and manipulating networks, Proceedings of the International AAAI Conference on Web and Social Media 3 (1) (2009) 361–362.
+
+D. Szklarczyk, A. L. Gable, D. Lyon, A. Junge, S. Wyder, J. Huerta-Cepas, M. Simonovic, N. T. Doncheva, J. H. Morris, P. Bork, L. J. Jensen, C. von Mering, String v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets, Nucleic Acids Research 47 (D1) (2019) D607–D613.
+
+D. Dallah, H. Sulieman, Outlier detection using the range distribution, in: Advances in Mathematical Modeling and Scientific Computing, Springer, 2024, pp. 687–697.
+
+S. Silva, N. Avila, et al., Beyond methane oxidation: The protein landscape of anme-2a reveals an integrated system for diazotrophy and membrane fortification, Environmental Microbiology Reports 16 (6) (2024) e70233. doi:10.1111/1758-2229.70233.
+
+C. Gu, et al., Current status and applications of genome-scale metabolic models, Genome Biology 20 (1) (2019) 1–18.
+
+S. M. D. Seaver, et al., The modelseed biochemistry database for the integration of metabolic annotations and the reconstruction, comparison and analysis of metabolic models for plants, fungi and microbes, Nucleic Acids Research 49 (D1) (2021) D575–D588.
+
+J. Kratz, S. Banerjee, Gene expression tradeoffs determine bacterial survival and adaptation to antibiotic stress, PRX Life 2 (2024) 013010. doi:10.1103/PRXLife.2.013010.
+
+S. A. Williams, et al., A dynamic protein interactome drives energy conservation and electron flux in Thermococcus kodakarensis, Applied and Environmental Microbiology 91 (4) (2025). doi:10.1128/aem.00293-25.
+
+U. U. Sezen, et al., Comparative transcriptomics of tropical woody plants supports fast and furious strategy along the leaf economics spectrum in lianas, Biology Open 11 (7) (2022). doi:10.1242/bio.059184.
+
+Y. Lee, D. Ren, B. Jeon, H. Liu, S-adenosylmethionine: more than just a methyl donor, Nat Prod Rep 40 (7) (2023) 1521–1549. doi:10.1039/D2NP00086E.
+
+M. Monné, C. Marobbio, G. Agrimi, L. Palmieri, F. Palmieri, Mitochondrial transport and metabolism of the major methyl donor s-adenosylmethionine, and related diseases: a review, IUBMB Life 74 (8) (2022) 706–722. doi:10.1002/iub.2658.
+
+A. Rudenko, S. Mariasina, R. Ozhiganov, P. Sergiev, V. Polshakov, Enzymatic reactions of s-adenosyl-l-methionine: synthesis and applications, Biochemistry (Moscow) 90 (Suppl 1) (2025) S105–S134. doi:10.1134/S0006297924604210.
+
+N. Goodacre, D. Gerloff, P. Uetz, Protein domains of unknown function are essential in bacteria, mBio 5 (1) (2013) e00744–13. doi:10.1128/mBio.00744-13.
+
+P. Buttigieg, W. Hankeln, I. Kostadinov, R. Kottmann, P. Yilmaz, M. Duhaime, et al., Ecogenomic perspectives on domains of unknown function: correlation-based exploration of marine metagenomes, PLoS One 8 (12) (2013) e50869. doi:10.1371/journal.pone.0050869.
+
+C. Luo, M. Akhtar, W. Min, X. Bai, T. Ma, C. Liu, Domain of unknown function (duf) proteins in plants: function and perspective, Protoplasma 261 (3) (2024) 397–410. doi:10.1007/s00709-023-01917-8.
+
+C. Duport, M. Jobin, P. Schmitt, Adaptation in bacillus cereus: from stress to disease, Front Microbiol 7 (2016) 1550. doi:10.3389/fmicb.2016.01550.
+
+A. Brown, M. Anderson, M. Bachman, H. Mobley, The arcab two-component system: function in metabolism, redox control, and infection, Microbiol Mol Biol Rev 86 (2) (2022) e00110–21. doi:10.1128/mmbr.00110-21.
+
+S. How, S. Nathan, S. Lam, S. Chieng, Atp-binding cassette (abc) transporters: structures and roles in bacterial pathogenesis, J Zhejiang Univ Sci B 26 (1) (2025) 58–75. doi:10.1631/jzus.B2300641.
+
+J. Davies, M. Currie, J. Wright, M. Newton-Vesty, R. North, P. Mace, et al., Selective nutrient transport in bacteria: multicomponent transporter systems reign supreme, Front Mol Biosci 8 (2021) 699222. doi:10.3389/fmolb.2021.699222.
+
+C. Manktelow, H. White, N. Crickmore, B. Raymond, Divergence in environmental adaptation between terrestrial clades of the bacillus cereus group, FEMS Microbiol Ecol 97 (1) (2021) fiaa228. doi:10.1093/femsec/fiaa228.
+
+A. Nagel, O. Vetrova, N. Rudenko, A. Surin, A. Karatovskaya, A. Zamyatina, et al., Truncated hemolysin ii and cytotoxin k2 forms of bacillus cereus, Russ J Bioorg Chem 50 (2024) 1800–1806. doi:10.1134/S1068162024050054.
+
+B. Glasset, M. Sperry, R. Dervyn, S. Herbin, A. Brisabois, N. Ramarao, The cytotoxic potential of bacillus cereus strains of various origins, Food Microbiol 98 (2021) 103759. doi:10.1016/j.fm.2021.103759.
+
+R. Berlemont, The supragenic organization of glycoside hydrolase encoding genes reveals distinct strategies for carbohydrate utilization in bacteria, Front Microbiol 14 (2023) 1179206. doi:10.3389/fmicb.2023.1179206.
+
+A. Ouertani, I. Chaabouni, A. Mosbah, J. Long, M. Barakat, P. Mansuelle, et al., Two new secreted proteases generate a casein-derived antimicrobial peptide in bacillus cereus leading to bacterial competition in milk, Front Microbiol 9 (2018) 1148. doi:10.3389/fmicb.2018.01148.
+
+Z. Kang, S. Yang, G. Du, J. Chen, Molecular engineering of secretory machinery components for high-level secretion of proteins in bacillus species, J Ind Microbiol Biotechnol 41 (11) (2014) 1599–1607. doi:10.1007/s10295-014-1506-4.
+
+M. Zhu, Q. Wang, H. Mu, F. Han, Y. Wang, X. Dai, A fitness tradeoff between growth and survival governed by spo0a-mediated proteome allocation constraints in bacillus subtilis, Sci Adv 9 (28) (2023) eadg9733. doi:10.1126/sciadv.adg9733.
+
+H. Farookhi, X. Xia, Differential selection for translation efficiency shapes translation machineries in bacterial species, Microorganisms 12 (4) (2024) 768. doi:10.3390/microorganisms12040768.
+
+X. Hu, H. Dourado, P. Schubert, M. Lercher, The protein translation machinery is expressed for maximal efficiency in escherichia coli, Nat Commun 11 (2020) 5260. doi:10.1038/s41467-020-18948-x.
+
+H. Zafar, A. Hassan, G. Demo, Translation machinery captured in motion, Wiley Interdiscip Rev RNA 14 (5) (2023) e1792. doi:10.1002/wrna.1792.
+
+L. Calvet, S. Matviienko, P. Ducluzaux, Network theory of the bacterial ribosome, PLoS One (2020).
+
+S. Seo, et al., Deciphering fur transcriptional regulatory network highlights its complex role beyond iron metabolism in escherichia coli, Nature Communications 5 (2009) 4910.
+
+M. Li, et al., Metabolic engineering of lactobacillus for enhanced production of bioactive compounds, Biotechnology Advances 70 (2024) 108234.
+
+E. Helfrich, et al., Bipartite interactions natural products and specialized metabolism, Nature Reviews Microbiology 17 (2019) 426–438.
+
+M. Avalos, et al., Selection in a growing colony biases results of mutation accumulation experiments, Scientific Reports 11 (2021) 17835.
+
+L. Godínez, et al., Microbial community structure and metabolic potential in tropical stingless bee colonies, Applied and Environmental Microbiology 90 (2024) e01234–24.
+
+O. Pyankova, et al., Antimicrobial activity of stingless bee propolis and its chemical composition, Antibiotics 11 (2022) 1678.
+
+J. Brunner, et al., Structural basis for recognition of synaptic vesicle protein 2a by botulinum neurotoxin a, Nature 615 (2023) 781–786.
+
+R. Joseph, et al., Structural insights into botulinum neurotoxin serotype a light chain recognition of snare proteins, Nature Communications 15 (2024) 1234.
+
+D. Xu, et al., Protein domain decomposition using a graph-theoretic approach, Bioinformatics 16 (2011) 1091–1104.
+
+E. Ärskold, et al., Phosphoketolase pathway dominates in lactobacillus reuteri atcc 55730 containing dual pathways for glycolysis, Journal of Bacteriology 190 (1) (2008) 206–212.
+
+R. Saha, P. Kishor, A. Singh, R. Rajasekaran, Synechonet: a database for protein-protein interactions in synechocystis sp. pcc 6803, BMC Bioinformatics 17 (1) (2016) 1–8. doi:10.1186/s12859-016-1322-7.
+
+Q. Zhang, H. Li, J. Lin, Q. Han, D. Huang, J. Zhang, Z. Zhang, G. Liu, Y. Deng, F. Chen, et al., Genome-wide reconstruction of protein-protein interaction network of pseudomonas aeruginosa, BMC Genomics 13 (1) (2012) 315. doi:10.1186/1471-2164-13-315.
+
+J. H. Connell, R. O. Slatyer, Mechanisms of succession in natural communities and their role in community stability and organization, The American Naturalist 111 (982) (1977) 1119–1144. DOI: 10.1086/283241.
+
+F. J. Odling-Smee, K. N. Laland, M. W. Feldman, Niche Construction: The Neglected Process in Evolution, Princeton University Press, Princeton, NJ (2003).
+
+T. Fukami, Historical contingency in community assembly: Integrating niches, species pools, and priority effects, Annual Review of Ecology, Evolution, and Systematics 46 (2015) 1–23. DOI: 10.1146/annurev-ecolsys-110411-160340.
+
+S. Widder, R. J. Allen, T. Pfeiffer, T. P. Curtis, C. Wiuf, W. T. Sloan, et al., Challenges in microbial ecology: building predictive understanding of community function and dynamics, The ISME Journal 10 (2016) 2557–2568. DOI: 10.1038/ismej.2016.45.
+
+J. E. Goldford, N. Lu, D. Bajic, S. Estrela, M. Tikhonov, A. Sanchez-Gorostiaga, et al., Emergent simplicity in microbial community assembly, Science 361 (6401) (2018) 469–474. DOI: 10.1126/science.aat1168.

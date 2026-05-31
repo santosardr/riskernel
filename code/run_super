@@ -1,0 +1,122 @@
+#!/bin/bash
+set -e
+
+# Super Runner Script for RIS-Kernel Benchmark
+# Coordinates the full manuscript sweeps for both 32 QA (4 threads) and 64 QA (8 threads)
+# and performs the sweet spot sub-sparsity search directly using the benchmark driver.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. System Capacity Check
+# ─────────────────────────────────────────────────────────────────────────────
+TOTAL_RAM=$(free -g | awk '/^Mem:/{print $2}')
+CPU_CORES=$(nproc)
+
+echo "=== System Capacity Check ==="
+echo "Total RAM : ${TOTAL_RAM} GB"
+echo "CPU Cores : ${CPU_CORES}"
+echo "=== Hardware Warning ==="
+echo "[WARNING] GPU execution was not tested due to a lack of target hardware."
+echo "Correct operation is only officially guaranteed on CPU environments."
+echo "============================="
+
+# We check if this is a high-performance machine (e.g., bioinfo, ibteci, or similar servers with >= 60GB RAM)
+if [ "$TOTAL_RAM" -ge 60 ]; then
+    echo "[INFO] High-capacity environment detected (RAM >= 60GB). Eligible for full manuscript sweep."
+    RUN_FULL=true
+else
+    echo "[WARNING] Low-capacity environment detected (RAM < 60GB)."
+    echo "Running the full 32k/64k sweeps will likely cause Out-Of-Memory (OOM) crashes."
+    echo "We will run a validation-only smoke test instead."
+    RUN_FULL=false
+fi
+
+# Detect if we are in Code Ocean to set the validation output location
+if [ -d "/results" ] && [ -w "/results" ]; then
+    VAL_OUT_DIR="/results"
+else
+    VAL_OUT_DIR="scripts/benchmark"
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2. Execution Phase
+# ─────────────────────────────────────────────────────────────────────────────
+if [ "$RUN_FULL" = true ]; then
+    echo "[RUNNING] Starting FULL manuscript benchmark sweeps..."
+
+    # ---------------------------------------------------------
+    # 2.1. 32 QA Sweep (32k tokens window, 4 threads)
+    # ---------------------------------------------------------
+    echo "=== Running 32k Baseline Sweeps (32 QA, 4 Threads) ==="
+    for density in 0.01 0.02 0.05; do
+        for mode in stochastic structural; do
+            echo "[EXEC] 32k Sweep: Density=${density} | Mode=${mode}"
+            python3 scripts/benchmark32/run_full_baseline_32k.py \
+                --target_density "$density" \
+                --ris_mode "$mode" \
+                --threads 4
+        done
+    done
+
+    # ---------------------------------------------------------
+    # 2.2. 64 QA Sweep (64k tokens window, 8 threads)
+    # ---------------------------------------------------------
+    echo "=== Running 64k Baseline Sweeps (64 QA, 8 Threads) ==="
+    for density in 0.01 0.02 0.05; do
+        echo "[EXEC] 64k Structural Sweep: Density=${density}"
+        python3 scripts/benchmark/run_baseline_structural.py \
+            --target_density "$density"
+    done
+
+    # ---------------------------------------------------------
+    # 2.3. Sweet Spot Search (64k tokens, 8 threads, direct benchmark driver)
+    # ---------------------------------------------------------
+    echo "=== Running 64k Sweet Spot Sub-Sparsity Sweep (64 QA, 8 Threads) ==="
+    echo "[INFO] Running sweet spot directly using run_benchmark.py (no python coordinator)"
+    
+    for target_density in 0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009; do
+        # Calculate b_max = round(target_density * 65536) using python3 for reliability
+        b_max=$(python3 -c "print(round($target_density * 65536))")
+        
+        # Output file named corresponding to density in its default script directory
+        sweet_spot_csv="scripts/benchmark/results_structural_sweet_spot_64_d${target_density}.csv"
+        
+        for seeds in 50 100 150 200; do
+            echo "[EXEC] Sweet Spot: Density=${target_density} (b_max=${b_max}) | Seeds=${seeds}"
+            
+            python3 scripts/benchmark/run_benchmark.py \
+                --threads 8 \
+                --models "qwen2" \
+                --windows "65536" \
+                --rope_type "yarn" \
+                --ris_mode "structural" \
+                --densities "0.0" \
+                --n_seeds "$seeds" \
+                --b_max "$b_max" \
+                --out_csv "$sweet_spot_csv"
+        done
+    done
+
+else
+    echo "[RUNNING] Starting VALIDATION smoke test (Low-Capacity Mode)..."
+    
+    # Run a very quick check on 32k and 64k to ensure scripts and drivers compile and execute correctly
+    echo "=== Validation: Quick 32k Sweep ==="
+    python3 scripts/benchmark32/run_benchmark.py \
+        --threads 4 \
+        --models "qwen2" \
+        --windows "0,4096" \
+        --densities "0.05" \
+        --n_seeds "1" \
+        --out_csv "${VAL_OUT_DIR}/results_baseline_32k_validation.csv"
+
+    echo "=== Validation: Quick 64k Sweep ==="
+    python3 scripts/benchmark/run_benchmark.py \
+        --threads 8 \
+        --models "qwen2" \
+        --windows "0,4096" \
+        --densities "0.05" \
+        --n_seeds "1" \
+        --out_csv "${VAL_OUT_DIR}/results_64_validation.csv"
+fi
+
+echo "=== Super Pipeline Finished ==="

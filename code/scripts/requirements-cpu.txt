@@ -1,0 +1,24 @@
+# RIS-Kernel - CPU-only requirements
+# For machines WITHOUT GPU (no CUDA/NVIDIA drivers needed)
+# Install PyTorch CPU build first (saves ~1.5GB of NVIDIA CUDA packages):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+# Then install the rest:
+#   pip install -r requirements-cpu.txt
+
+torch>=2.0.0
+transformers>=4.30.0
+peft>=0.4.0
+datasets>=2.12.0
+accelerate>=0.20.0
+pypdf
+markdown
+fastparquet
+langchain
+langchain-community
+langchain-huggingface
+langchain-chroma
+langchain-core
+chromadb
+sentence-transformers
+psutil
