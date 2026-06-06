@@ -1,5 +1,8 @@
 # RIS-Kernel Code Ocean Capsule
 
+> [!NOTE]
+> This capsule provides the concrete systems-level implementation and practical execution environment for **RIS-Kernel**, which is a continuation of the theoretical foundations established in the original [RIS Repository](https://github.com/santosardr/ris).
+
 This directory replicates the structured environment required for running the RIS-Kernel benchmark suite on a Code Ocean capsule.
 
 ## Capsule Folder Structure

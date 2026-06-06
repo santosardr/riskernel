@@ -3,6 +3,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20476759.svg)](https://doi.org/10.5281/zenodo.20476759)
 [![Code Ocean](https://img.shields.io/badge/Code%20Ocean-Capsule-blue)](https://doi.org/10.24433/CO.0351350.v1)
 
+> [!NOTE]
+> **RIS-Kernel** is the concrete systems-level implementation and continuation of the original **RIS (Reduced Interaction Sampling)** framework. While the theoretical foundations, mathematical proofs, and initial simulations are established in the [RIS Repository](https://github.com/santosardr/ris) (theory), this repository delivers the practical implementation, kernel execution patterns, and production-scale CPU-bound inference engine (practice).
+
 This repository contains the official implementation of **RIS-Kernel**, a systems-level sparse attention inference engine that runs massive context windows (64k+ tokens) on commodity, unaccelerated CPU hardware.
 
 ---
