@@ -35,7 +35,7 @@ RISKERNEL_ROOT = os.path.dirname(BASE_DIR)
 
 # BASE CONFIGURATION
 TINYLLAMA_BASE_DIR = os.path.join(RISKERNEL_ROOT, "models")
-QWEN2_MODEL_ID = "Qwen/Qwen2-1.5B-Instruct"
+QWEN2_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 ORIGINAL_TINYLLAMA_MODEL_ID = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 TRAINING_MODELS_DIR = os.path.join(RISKERNEL_ROOT, "models")
 
@@ -155,7 +155,7 @@ def resolve_base_model_for_version(model_class, version, pureris=True):
     if model_class == 'tinyllama':
         return ORIGINAL_TINYLLAMA_MODEL_ID, "TinyLlama original"
 
-    return QWEN2_MODEL_ID, "Qwen2-1.5B-Instruct"
+    return QWEN2_MODEL_ID, "Qwen2.5-1.5B-Instruct"
 
 
 def resolve_latest_base_only_model(model_class, pureris=True):
@@ -169,7 +169,7 @@ def resolve_latest_base_only_model(model_class, pureris=True):
     latest_model = find_latest_base_model(TINYLLAMA_BASE_DIR, "Qwen-Bio", pureris=pureris)
     if latest_model:
         return latest_model, os.path.basename(latest_model)
-    return QWEN2_MODEL_ID, "Qwen2-1.5B-Instruct"
+    return QWEN2_MODEL_ID, "Qwen2.5-1.5B-Instruct"
 
 class Spinner:
     def __init__(self, message="Processing"):
@@ -202,7 +202,7 @@ def load_ris_model(max_length=65536, selected_dtype="float32", model_class='qwen
     from transformers import AutoConfig
     
     if model_class == 'qwen2':
-        model_id = "Qwen/Qwen2-1.5B-Instruct" if not base_model_path else base_model_path
+        model_id = QWEN2_MODEL_ID if not base_model_path else base_model_path
     else:
         model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" if not base_model_path else base_model_path
     
@@ -566,7 +566,6 @@ def chat_loop(model, tokenizer, total_max_length, chat_buffer_size, initial_cont
     SYSTEM_PROMPT = (
         f"You are RIS-Kernel {version}, a high-level technical Oracle specializing in biochemistry and molecular biology. "
         "Your mission is to provide dense, technically rigorous responses without conversational filler, preambles, or social etiquette. "
-        "Incorporate specific kinetic parameters (Km, Vmax, kcat), thermodynamic data (deltaG, deltaS, enthalpy), and molecular structural details into every explanation. "
         "Focus on concrete biochemical strategies over abstract generalizations. "
         "If requested for computational tools or code, provide the code implementation directly without introductory text."
     )
@@ -918,7 +917,6 @@ def main():
         SYSTEM_PROMPT = (
             "You are RIS-Kernel V5.9-Ultimate, a high-level technical Oracle specializing in biochemistry and molecular biology. "
             "Your mission is to provide dense, technically rigorous responses without conversational filler, preambles, or social etiquette. "
-            "Incorporate specific kinetic parameters (Km, Vmax, kcat), thermodynamic data (deltaG, deltaS, enthalpy), and molecular structural details into every explanation. "
             "Focus on concrete biochemical strategies over abstract generalizations. "
             "If requested for computational tools or code, provide the code implementation directly without introductory text."
         )
