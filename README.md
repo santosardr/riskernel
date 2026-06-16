@@ -41,10 +41,10 @@ This implementation is optimized for **CPU-only execution** to enable long-conte
 The repository is structured to run both locally and as a reproducible Code Ocean capsule:
 
 *   `code/`: All execution scripts, entry points, and visualization modules.
-    - [code/scripts/ris_attention.py](file:///home/anderson/repos/riskernel/code/scripts/ris_attention.py): Core implementation of the Reduced Interaction Sampling sparse geometry.
-    - [code/scripts/inference_ris_v3.py](file:///home/anderson/repos/riskernel/code/scripts/inference_ris_v3.py): High-performance CPU-bound inference engine utilizing dual-hash caching and PFUS.
-    - `code/scripts/benchmark/`: Execution scripts for running sweeps across context windows and densities.
-    - `code/article/fig/`: Visualization scripts for generating plots.
+    - [ris_attention.py](file:///home/anderson/repos/riskernel-github/riskernel/code/scripts/ris_attention.py): Core implementation of the Reduced Interaction Sampling sparse geometry.
+    - [inference_ris_v3.py](file:///home/anderson/repos/riskernel-github/riskernel/code/scripts/inference_ris_v3.py): High-performance CPU-bound inference engine utilizing dual-hash caching and PFUS.
+    - [benchmark](file:///home/anderson/repos/riskernel-github/riskernel/code/scripts/benchmark/): Execution scripts for running sweeps across context windows and densities.
+    - [fig](file:///home/anderson/repos/riskernel-github/riskernel/code/article/fig/): Visualization scripts for generating plots.
 *   `data/`: Mounted/local directory for context documents (`genppi.txt`, `aom.txt`, etc.).
 *   `results/`: Directory where benchmarks and generated figures are outputted.
 
@@ -64,21 +64,56 @@ pip install -r code/scripts/requirements-cpu.txt
 The context articles are already pre-loaded under the `data/` folder. If you wish to use your own PDFs, you can use the `extract_pdf.py` utility from the manuscript repository to preprocess them into clean text blocks.
 
 ### 3. Run Inference
-Launch the inference engine using python:
+The inference driver [inference_ris_v3.py](file:///home/anderson/repos/riskernel-github/riskernel/code/scripts/inference_ris_v3.py) supports two modes: interactive chat and non-interactive prompt queries.
+
+> [!TIP]
+> **Optimized Defaults**: RIS-Kernel is pre-configured with the optimal hyperparameters to maximize coherence and retrieval accuracy:
+> *   **RIS Attention Density (`--density`)**: `0.03` (3% sparsity)
+> *   **Ensemble Projections (`--n_seeds`)**: `30` independent seeds
+> *   **Temperature (`--temp`)**: `0.2`
+> *   **Repetition Penalty (`--repetition_penalty`)**: `1.1`
+> 
+> Under normal operation, **you do not need to modify these parameters** as their defaults represent the calibrated winning combination.
+
+#### Non-Interactive Prompt Mode (Recommended for batch queries)
+To run a single query against long documents and exit immediately:
+
 ```bash
 PYTHONPATH=code/scripts python code/scripts/inference_ris_v3.py \
   --model_class qwen2 \
-  --window 65536 \
+  --window 32768 \
   --context_files data/genppi.txt \
-  --density 0.05 \
-  --n_seeds 1
+  --prompt "What is the role of Random Forest in GenPPi?"
 ```
 
-#### Key Arguments:
-- `--window`: Context window size in tokens.
-- `--density`: Active attention density fraction (e.g., `0.01` for 1%, `0.05` for 5%).
-- `--n_seeds`: Number of stochastically projected masks to ensemble.
-- `--save_graph`: Exports the attention topology to a `.dot` file.
+You can also read the prompt query from a text file:
+```bash
+PYTHONPATH=code/scripts python code/scripts/inference_ris_v3.py \
+  --model_class qwen2 \
+  --window 32768 \
+  --context_files data/genppi.txt \
+  --prompt_file data/prompt.txt
+```
+
+#### Interactive Chat Mode
+To start a multi-turn chat session inside your terminal:
+
+```bash
+PYTHONPATH=code/scripts python code/scripts/inference_ris_v3.py \
+  --model_class qwen2 \
+  --window 32768 \
+  --context_files data/genppi.txt
+```
+
+#### Common Arguments You May Modify:
+*   `--model_class`: LLM family to load (`qwen2` or `tinyllama`).
+*   `--window`: Context window size in tokens allocated for text files.
+*   `--context_files`: Comma-separated list of document paths to load into the LLM context.
+*   `--prompt`: Custom single-turn query string.
+*   `--prompt_file`: Path to a text file containing the query.
+*   `--max_new_tokens`: Caps output token generation length in prompt mode (defaults to `1024`).
+*   `--output_file`: Path to save the generated response text to disk (prompt mode only).
+*   `--save_graph`: Exports the attention topology to a `.dot` file.
 
 ---
 
