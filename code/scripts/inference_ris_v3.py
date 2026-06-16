@@ -197,7 +197,7 @@ class Spinner:
             self.thread.join()
 
 
-def load_ris_model(max_length=65536, selected_dtype="float32", model_class='qwen2', density=0.05, base_model_path=None, pure_ris=False, apply_rope=True, rope_type="linear", seed=42, local_window=1024, n_seeds=1, needs_graph=False, global_window=256, b_max=2048, ris_mode='stochastic', disable_ris=False, bypass_generation_map=False):
+def load_ris_model(max_length=65536, selected_dtype="float32", model_class='qwen2', density=0.03, base_model_path=None, pure_ris=False, apply_rope=True, rope_type="linear", seed=42, local_window=1024, n_seeds=30, needs_graph=False, global_window=256, b_max=2048, ris_mode='stochastic', disable_ris=False, bypass_generation_map=False):
     from ris_attention import replace_attention_with_ris
     from transformers import AutoConfig
     
@@ -517,7 +517,7 @@ def get_context_hash(context_text, window, model_class, n_seeds, density, b_max,
     
     return base_hash, ris_hash
 
-def chat_loop(model, tokenizer, total_max_length, chat_buffer_size, initial_context="", temp=0.1, top_k=50, top_p=0.9, version="V5.9-Ultimate", repetition_penalty=1.3, semantic_filter=False, semantic_threshold=0.1, model_class='tinyllama', n_seeds=1, density=0.01, b_max=2048, ris_mode='stochastic'):
+def chat_loop(model, tokenizer, total_max_length, chat_buffer_size, initial_context="", temp=0.2, top_k=50, top_p=0.9, version="V5.9-Ultimate", repetition_penalty=1.1, semantic_filter=False, semantic_threshold=0.1, model_class='tinyllama', n_seeds=30, density=0.03, b_max=2048, ris_mode='stochastic'):
     print("\n" + "="*60)
     print(f" RIS-Kernel {version} | Base: dynamic | Window: {total_max_length} Tokens")
     print(f" [Knowledge: {total_max_length - chat_buffer_size} | Chat: {chat_buffer_size} buffer]")
@@ -773,7 +773,7 @@ def chat_loop(model, tokenizer, total_max_length, chat_buffer_size, initial_cont
             break
 
 
-def run_single_prompt(model, tokenizer, total_max_length, chat_buffer_size, initial_context="", prompt="", system_prompt_override=None, temp=0.1, top_k=50, top_p=0.9, version="V5.9-Ultimate", repetition_penalty=1.3, model_class='qwen2', n_seeds=1, density=0.01, b_max=2048, ris_mode='stochastic', max_new_tokens=1024, output_file=None):
+def run_single_prompt(model, tokenizer, total_max_length, chat_buffer_size, initial_context="", prompt="", system_prompt_override=None, temp=0.2, top_k=50, top_p=0.9, version="V5.9-Ultimate", repetition_penalty=1.1, model_class='qwen2', n_seeds=30, density=0.03, b_max=2048, ris_mode='stochastic', max_new_tokens=1024, output_file=None):
     if system_prompt_override:
         SYSTEM_PROMPT = system_prompt_override
     else:
@@ -941,17 +941,17 @@ def main():
     parser = argparse.ArgumentParser(description="RIS-Oracle V3: Massive Context Inference without LoRA for O(N) proof.")
     parser.add_argument("--window", type=int, default=32768, help="Reserved size for ARTICLES only (Content)")
     parser.add_argument("--chat_buffer", type=int, default=8192, help="Extra size reserved for CHAT (Default: 8192)")
-    parser.add_argument("--temp", type=float, default=0.1, help="Generation temperature")
+    parser.add_argument("--temp", type=float, default=0.2, help="Generation temperature")
     parser.add_argument("--dtype", type=str, default="float32", help="Precision: float32 (Recommended for Haswell CPUs)")
     parser.add_argument("--context_files", type=str, default="", help="Comma-separated file list to inject. Ex: data/article.txt,data/lehninger.txt")
     parser.add_argument("--model_class", type=str, default='qwen2', help="Model family to use (qwen2/tinyllama)")
-    parser.add_argument("--density", type=float, default=0.05, help="RIS mask density (default: 0.05)")
+    parser.add_argument("--density", type=float, default=0.03, help="RIS mask density (default: 0.03)")
     parser.add_argument("--base_model_path", type=str, default=None, help="Custom path for the base model.")
     parser.add_argument("--pureris", action="store_true", default=False, help="Enable Pure RIS mode (stochastic). Disabled by default.")
     parser.add_argument("--bigbird", action="store_false", dest="pureris", help="Enable BigBird Hybrid mode (Default)")
     parser.add_argument("--apply_rope", action="store_true", help="Apply RoPE Scaling if max_length > native limit")
     parser.add_argument("--seed", type=int, default=42, help="RIS stochastic seed")
-    parser.add_argument("--repetition_penalty", type=float, default=1.3)
+    parser.add_argument("--repetition_penalty", type=float, default=1.1)
     parser.add_argument("--no_semantic_filter", action="store_false", dest="semantic_filter")
     parser.add_argument("--semantic_threshold", type=float, default=-0.1)
     parser.add_argument("--threads", type=int, default=None)
@@ -961,7 +961,7 @@ def main():
     parser.add_argument("--top_p", type=float, default=0.9, help="Top-P Sampling (Nucleus)")
     parser.add_argument("--top_k", type=int, default=50, help="Top-K Sampling")
     parser.add_argument("--save_graph", type=str, default=None, help="Export stochastic attention graph (5%%) to a .dot file")
-    parser.add_argument("--n_seeds", type=int, default=1, help="Number of independent RIS projections to merge (Ensemble)")
+    parser.add_argument("--n_seeds", type=int, default=30, help="Number of independent RIS projections to merge (Ensemble)")
     parser.add_argument("--co", action="store_true", help="Enable Code Ocean compatibility mode (overrides resources)")
     parser.add_argument("--b_max", type=int, default=2048, help="Maximum block size for O(N) guarantee (structural mode)")
     parser.add_argument("--ris_mode", type=str, default='stochastic', choices=['stochastic', 'structural'],
