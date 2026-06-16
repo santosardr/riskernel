@@ -773,6 +773,170 @@ def chat_loop(model, tokenizer, total_max_length, chat_buffer_size, initial_cont
             break
 
 
+def run_single_prompt(model, tokenizer, total_max_length, chat_buffer_size, initial_context="", prompt="", system_prompt_override=None, temp=0.1, top_k=50, top_p=0.9, version="V5.9-Ultimate", repetition_penalty=1.3, model_class='qwen2', n_seeds=1, density=0.01, b_max=2048, ris_mode='stochastic', max_new_tokens=1024, output_file=None):
+    if system_prompt_override:
+        SYSTEM_PROMPT = system_prompt_override
+    else:
+        SYSTEM_PROMPT = (
+            f"You are RIS-Kernel {version}, a high-level technical Oracle specializing in biochemistry and molecular biology. "
+            "Your mission is to provide dense, technically rigorous responses without conversational filler, preambles, or social etiquette. "
+            "Focus on concrete biochemical strategies over abstract generalizations. "
+            "If requested for computational tools or code, provide the code implementation directly without introductory text."
+        )
+
+    # 1. PREFILL SYSTEM PROMPT
+    if model_class == 'qwen2':
+        messages = [{"role": "system", "content": f"{SYSTEM_PROMPT}\n\nKNOWLEDGE BASE:\n{initial_context}" if initial_context else SYSTEM_PROMPT}]
+        system_text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
+    else:
+        system_text = f"[SYSTEM]: {SYSTEM_PROMPT}\n"
+        if initial_context:
+            system_text += f"<KNOWLEDGE_BASE>\n{initial_context}\n</KNOWLEDGE_BASE>\n"
+        system_text += "Technical Analysis Segment:\n"
+    
+    inputs = tokenizer(system_text, return_tensors="pt", add_special_tokens=False).to(model.device)
+    total_tokens = inputs['input_ids'].shape[1]
+    curr_len = total_tokens
+
+    # --- PERSISTENCE SYSTEM ---
+    if IS_CO:
+        cache_dir = "/tmp/ris_cache"
+    else:
+        cache_dir = os.path.join(BASE_DIR, "data", "ris_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    
+    base_hash, ris_hash = get_context_hash(initial_context, total_max_length, model_class, n_seeds, density, b_max, ris_mode)
+    
+    cache_path = os.path.join(cache_dir, f"{model_class}_cache_{base_hash}.pt")
+    ris_cache_path = os.path.join(cache_dir, f"{model_class}_ris_{ris_hash}.pt")
+    
+    past_key_values = None
+    loaded_from_cache = False
+
+    from ris_attention import load_ris_state, save_ris_state
+
+    if os.path.exists(cache_path):
+        print(f"[SYSTEM] Base Memory detected: {base_hash}. Restoring state...")
+        t_load = time.time()
+        try:
+            past_key_values = torch.load(cache_path, weights_only=False)
+            if os.path.exists(ris_cache_path):
+                load_ris_state(ris_cache_path, device=model.device, density=density, b_max=b_max, ris_mode=ris_mode)
+            else:
+                print(f"[SYSTEM] New RIS configuration ({n_seeds} seeds). Activating fast reconstruction...")
+            loaded_from_cache = True
+            print(f"[SYSTEM] Brain restored in {time.time() - t_load:.1f}s. Skipping prefill.")
+        except Exception as e:
+            print(f"[WARNING] Failed to load cache: {e}. Starting standard prefill...")
+
+    if not loaded_from_cache:
+        all_input_ids = inputs['input_ids']
+        chunk_size = 1024
+        past_key_values = None
+        
+        print(f"\n[SYSTEM] Initializing biochemical brain ({total_tokens} tokens)...")
+        print(f"[SYSTEM] Processing in chunks of {chunk_size} to save RAM...")
+        
+        from tqdm import tqdm
+        t_start = time.time()
+        
+        with torch.no_grad():
+            for i in range(0, total_tokens, chunk_size):
+                end_idx = min(i + chunk_size, total_tokens)
+                chunk = all_input_ids[:, i:end_idx]
+                outputs = model(input_ids=chunk, past_key_values=past_key_values, use_cache=True)
+                past_key_values = outputs.past_key_values
+                
+                if i == 0:
+                    pbar = tqdm(total=total_tokens, desc="[SYSTEM] Ingestion", unit="tk")
+                pbar.update(chunk.shape[1])
+                
+        pbar.close()
+        t_end = time.time()
+        print(f"[SYSTEM] Base KV-Cache consolidated in {t_end - t_start:.1f}s ({total_tokens / max(1, t_end - t_start):.1f} tokens/s).")
+        
+        print(f"[SYSTEM] Saving persistent brain in {cache_path}...")
+        torch.save(past_key_values, cache_path)
+        save_ris_state(ris_cache_path)
+
+    # Clean coordination cache
+    from ris_attention import clear_coordination_cache
+    clear_coordination_cache()
+
+    # Format user prompt
+    if model_class == 'qwen2':
+        prefix = "<|im_start|>user\n"
+        suffix = "<|im_end|>\n<|im_start|>assistant\n"
+        user_text = f"{prefix}{prompt}{suffix}"
+    else:
+        user_text = f"\nBiochemist's Question: {prompt}\nScientific Oracle Response: "
+
+    user_inputs = tokenizer(user_text, return_tensors="pt", add_special_tokens=False).to(model.device)
+    input_ids = user_inputs['input_ids']
+    
+    batch_size = input_ids.shape[0]
+    new_len = input_ids.shape[1]
+    total_len = curr_len + new_len
+
+    if total_len > total_max_length:
+        print(f"[System]: Window full ({total_len} > {total_max_length}). In prompt mode, cannot proceed.")
+        return
+
+    position_ids = torch.arange(curr_len, total_len, device=model.device).unsqueeze(0)
+    attention_mask = torch.ones((batch_size, total_len), device=model.device, dtype=torch.long)
+
+    # Stop Criteria
+    stop_ids = [tokenizer.eos_token_id]
+    if model_class == 'qwen2':
+        stop_ids.extend([151644, 151645])
+    
+    id_stop = StopOnTokens(stop_ids)
+    stopping_criteria = StoppingCriteriaList([id_stop])
+
+    print(f"Response: ", end="", flush=True)
+    
+    from transformers import TextStreamer
+    streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
+    with torch.no_grad():
+        generate_outputs = model.generate(
+            input_ids=input_ids,
+            past_key_values=past_key_values,
+            attention_mask=attention_mask,
+            position_ids=position_ids,
+            max_new_tokens=max_new_tokens,
+            do_sample=True,
+            temperature=temp,
+            top_k=top_k,
+            top_p=top_p,
+            repetition_penalty=repetition_penalty,
+            pad_token_id=tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id,
+            use_cache=True,
+            stopping_criteria=stopping_criteria,
+            streamer=streamer,
+            return_dict_in_generate=True
+        )
+
+    # Extract response text
+    gen_ids = generate_outputs.sequences[0]
+    new_tokens_produced = gen_ids[input_ids.shape[1]:]
+    response_text = tokenizer.decode(new_tokens_produced, skip_special_tokens=True).strip()
+    
+    # Sanitization
+    for stop_term in ["Sure!", "I'm sorry", "Please note", "You:", "Biochemist"]:
+        if stop_term in response_text:
+            response_text = response_text.split(stop_term)[0].strip()
+
+    if output_file:
+        output_dir = os.path.dirname(output_file)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(response_text)
+        print(f"\n[SYSTEM] Saved response to {output_file}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="RIS-Oracle V3: Massive Context Inference without LoRA for O(N) proof.")
     parser.add_argument("--window", type=int, default=32768, help="Reserved size for ARTICLES only (Content)")
@@ -803,7 +967,24 @@ def main():
     parser.add_argument("--ris_mode", type=str, default='stochastic', choices=['stochastic', 'structural'],
                         help="RIS geometry mode: 'stochastic' (default, original) or 'structural' (clique decomposition)")
 
+    # New prompt-specific parameters
+    prompt_group = parser.add_mutually_exclusive_group()
+    prompt_group.add_argument("--prompt", type=str, default=None, help="A single prompt to execute non-interactively and exit.")
+    prompt_group.add_argument("--prompt_file", type=str, default=None, help="Path to a text file containing the prompt to execute non-interactively and exit.")
+    
+    parser.add_argument("--max_new_tokens", type=int, default=1024, help="Max new tokens to generate when running in prompt mode.")
+    parser.add_argument("--system_prompt", type=str, default=None, help="Override system prompt for prompt mode.")
+    parser.add_argument("--output_file", type=str, default=None, help="Save the generated response to this file (only valid in prompt mode).")
+
     args = parser.parse_args()
+
+    # Validation of mutually dependent/exclusive options
+    is_prompt_mode = (args.prompt is not None) or (args.prompt_file is not None)
+    if not is_prompt_mode:
+        if args.output_file is not None:
+            parser.error("--output_file can only be used when --prompt or --prompt_file is specified.")
+        if args.system_prompt is not None:
+            parser.error("--system_prompt can only be used when --prompt or --prompt_file is specified.")
 
     # --- CODE OCEAN (CO) PREVALENCE LOGIC ---
     if args.co or IS_CO:
@@ -932,24 +1113,51 @@ def main():
         graph_tokens = tokenizer(system_text, add_special_tokens=False)['input_ids']
         export_ris_brain_graph(args.save_graph, tokenizer, graph_tokens)
 
-    chat_loop(
-        model, tokenizer, 
-        total_max_length=total_capacity, 
-        chat_buffer_size=args.chat_buffer, 
-        initial_context=initial_context, 
-        temp=args.temp, 
-        top_k=args.top_k,
-        top_p=args.top_p,
-        version="V5.9-Ultimate", 
-        repetition_penalty=args.repetition_penalty, 
-        semantic_filter=args.semantic_filter, 
-        semantic_threshold=args.semantic_threshold, 
-        model_class=args.model_class, 
-        n_seeds=args.n_seeds, 
-        density=args.density,
-        b_max=args.b_max,
-        ris_mode=args.ris_mode
-    )
+    if is_prompt_mode:
+        prompt_text = args.prompt
+        if args.prompt_file:
+            with open(args.prompt_file, 'r', encoding='utf-8') as f:
+                prompt_text = f.read()
+
+        run_single_prompt(
+            model, tokenizer, 
+            total_max_length=total_capacity, 
+            chat_buffer_size=args.chat_buffer, 
+            initial_context=initial_context, 
+            prompt=prompt_text,
+            system_prompt_override=args.system_prompt,
+            temp=args.temp, 
+            top_k=args.top_k,
+            top_p=args.top_p,
+            version="V5.9-Ultimate", 
+            repetition_penalty=args.repetition_penalty, 
+            model_class=args.model_class, 
+            n_seeds=args.n_seeds, 
+            density=args.density,
+            b_max=args.b_max,
+            ris_mode=args.ris_mode,
+            max_new_tokens=args.max_new_tokens,
+            output_file=args.output_file
+        )
+    else:
+        chat_loop(
+            model, tokenizer, 
+            total_max_length=total_capacity, 
+            chat_buffer_size=args.chat_buffer, 
+            initial_context=initial_context, 
+            temp=args.temp, 
+            top_k=args.top_k,
+            top_p=args.top_p,
+            version="V5.9-Ultimate", 
+            repetition_penalty=args.repetition_penalty, 
+            semantic_filter=args.semantic_filter, 
+            semantic_threshold=args.semantic_threshold, 
+            model_class=args.model_class, 
+            n_seeds=args.n_seeds, 
+            density=args.density,
+            b_max=args.b_max,
+            ris_mode=args.ris_mode
+        )
 
 if __name__ == "__main__":
     main()
