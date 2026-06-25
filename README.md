@@ -1,6 +1,6 @@
 # RIS-Kernel: A Model-Agnostic Architecture for Long-Context LLM Inference via Sparse Attention
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20476759.svg)](https://doi.org/10.5281/zenodo.20476759)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20814085.svg)](https://doi.org/10.5281/zenodo.20814085)
 [![Code Ocean](https://img.shields.io/badge/Code%20Ocean-Capsule-blue)](https://doi.org/10.24433/CO.0351350.v1)
 
 > [!NOTE]
