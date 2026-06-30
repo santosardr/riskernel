@@ -4,9 +4,9 @@
 [![Code Ocean](https://img.shields.io/badge/Code%20Ocean-Capsule-blue)](https://doi.org/10.24433/CO.0351350.v1)
 
 > [!NOTE]
-> **RIS-Kernel** is the concrete systems-level implementation and continuation of the original **RIS (Reduced Interaction Sampling)** framework. While the theoretical foundations, mathematical proofs, and initial simulations are established in the [RIS Repository](https://github.com/santosardr/ris) (theory), this repository delivers the practical implementation, kernel execution patterns, and production-scale CPU-bound inference engine (practice).
+> **RIS-Kernel** is the concrete systems-level implementation and continuation of the original **RIS (Reduced Interaction Sampling)** framework. While the theoretical foundations, mathematical proofs, and initial simulations are established in the [RIS Repository](https://github.com/santosardr/ris) (theory), this repository delivers the practical implementation, kernel execution patterns, and CPU-bound inference wrapper (practice).
 
-This repository contains the official implementation of **RIS-Kernel**, a systems-level sparse attention inference engine that runs massive context windows (64k+ tokens) on commodity, unaccelerated CPU hardware.
+RIS-Kernel is a model-agnostic runtime attention patching layer that enables running massive context windows (64k+ tokens) on commodity, unaccelerated CPU hardware. Rather than being a compiled standalone binary engine, it is implemented as a dynamic wrapper that intercepts standard Transformer self-attention calls at runtime, utilizing sparse stochastic geometry to bypass the quadratic memory bottleneck.
 
 ---
 
@@ -21,18 +21,6 @@ This repository contains the official implementation of **RIS-Kernel**, a system
 RIS-Kernel acts as a model-agnostic layer that intercepts attention calls at runtime. By implementing Reduced Interaction Sampling (RIS), it bypasses the $O(N^2)$ memory and compute bottleneck of standard Transformers.
 
 We utilize **Qwen2-1.5B** as a Proof of Concept (PoC). Demonstrating that RIS can stabilize and guide retrieval in a compact model proves that the architecture maintains contextual coherence even under severe parameter constraints, scaling naturally to larger architectures.
-
----
-
-## ⚠️ Hardware Disclaimer & Performance
-
-This implementation is optimized for **CPU-only execution** to enable long-context experiments on commodity academic machines (like standard workstations or departmental servers).
-
-- **RAM Requirements**: ~100GB+ RAM is required for stable 65,536 token inference sessions.
-- **CPU Performance**: 
-    - **Prefill**: ~50 minutes for 65k tokens (one-time cost, cached thereafter).
-    - **Generation**: ~5 seconds per token.
-- **GPU Note**: CUDA support is experimental. Running on GPU will drastically reduce prefill/generation times but requires high VRAM.
 
 ---
 
@@ -105,19 +93,39 @@ PYTHONPATH=code/scripts python code/scripts/inference_ris_v3.py \
   --context_files data/genppi.txt
 ```
 
-#### Common Arguments You May Modify:
-*   `--model_class`: LLM family to load (`qwen2` or `tinyllama`).
-*   `--window`: Context window size in tokens allocated for text files.
-*   `--context_files`: Comma-separated list of document paths to load into the LLM context.
-*   `--prompt`: Custom single-turn query string.
-*   `--prompt_file`: Path to a text file containing the query.
-*   `--max_new_tokens`: Caps output token generation length in prompt mode (defaults to `1024`).
-*   `--output_file`: Path to save the generated response text to disk (prompt mode only).
-*   `--save_graph`: Exports the attention topology to a `.dot` file.
+---
+
+## ⚙️ Technical Architecture & CPU Benchmarks
+
+To help researchers and engineers understand the performance characteristics and resource footprint of this prototype:
+
+### Performance & Hardware Footprint (Qwen2-1.5B-Instruct in float32)
+*   **RAM Requirements**: ~100GB+ RAM is required for stable 65,536 token inference sessions.
+*   **Prefill**: ~50 minutes for 65k tokens (one-time cost, cached thereafter).
+*   **Generation**: ~5 seconds per token.
+*   **GPU Note**: CUDA support is experimental. Running on GPU will drastically reduce prefill/generation times but requires high VRAM.
+
+### Under the Hood: Why the High RAM & Prefill Overhead?
+1. **PyTorch CPU Sparse Limitations (Prefill Overhead)**:
+   The current implementation is an algorithmic Proof-of-Concept written in high-level Python/PyTorch. During the **prefill** phase, PyTorch's native CPU backend (`scaled_dot_product_attention`) does not support sparse tensor layouts. Even though RIS defines a highly sparse attention geometry (e.g., 1%-5% active connections), PyTorch still materializes the dense boolean attention mask of shape `(batch, heads, seq_len, seq_len)` in RAM.
+   
+   For a 65,536-token context and 12 attention heads in `float32`, this single intermediate matrix requires:
+   $$12 \times 65,536 \times 65,536 \times 4 \text{ bytes} \approx 206 \text{ GB of RAM}$$
+   This triggers massive virtual memory swapping to disk on standard workstations (16GB–128GB RAM), leading to the 50-minute prefill bottleneck.
+
+2. **Persistent Caching**:
+   To bypass this one-time PyTorch prefill cost, RIS-Kernel automatically serializes the prefilled KV-cache to disk. For subsequent queries in the same context, the prefill is completely skipped, loading the cached state in ~90 seconds.
+
+3. **Generation Phase Advantage**:
+   During the **generation (decoding)** phase, the $O(N)$ attention memory scaling is completely bypassed. Instead of performing attention over all $N = 65,536$ past tokens, the wrapper uses `torch.index_select` to slice the KV cache. It attends only to the union of a local sliding window (e.g., 1024 tokens) and the stochastic samples (e.g., 1% density = ~655 tokens), reducing active computations to just ~1,679 tokens. This keeps CPU latency stable and prevents out-of-memory crashes during chat turns.
+
+4. **Production Path**:
+   Because this is an algorithmic prototype, the speed numbers reflect PyTorch CPU overhead. Porting the RIS sparse geometry to low-level C++ (e.g., as a custom `llama.cpp` block-sparse kernel) or a Triton GPU kernel would avoid materializing the dense attention matrix, resulting in instantaneous prefill and native decoding speeds.
 
 ---
 
 ## 📊 Visualization
+
 You can export the sparse attention topology with the `--save_graph` flag. Open the resulting `.dot` file in Graphviz or Gephi to inspect the attention retrieval maps.
 
 ---
@@ -132,7 +140,7 @@ The code is available for scientific transparency and reproducibility under the 
   title     = {RIS-Kernel: A Model-Agnostic Architecture for Long-Context LLM Inference via Sparse Attention},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.20476759},
-  url       = {https://doi.org/10.5281/zenodo.20476759}
+  doi       = {10.5281/zenodo.20814085},
+  url       = {https://doi.org/10.5281/zenodo.20814085}
 }
 ```
