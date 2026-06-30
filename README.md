@@ -1,10 +1,11 @@
 # RIS-Kernel: A Model-Agnostic Architecture for Long-Context LLM Inference via Sparse Attention
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20814085.svg)](https://doi.org/10.5281/zenodo.20814085)
+[![Theoretical Paper DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41598--026--59160--z-green)](https://doi.org/10.1038/s41598-026-59160-z)
+[![RIS-Kernel DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20476759.svg)](https://doi.org/10.5281/zenodo.20476759)
 [![Code Ocean](https://img.shields.io/badge/Code%20Ocean-Capsule-blue)](https://doi.org/10.24433/CO.0351350.v1)
 
 > [!NOTE]
-> **RIS-Kernel** is the concrete systems-level implementation and continuation of the original **RIS (Reduced Interaction Sampling)** framework. While the theoretical foundations, mathematical proofs, and initial simulations are established in the [RIS Repository](https://github.com/santosardr/ris) (theory), this repository delivers the practical implementation, kernel execution patterns, and CPU-bound inference wrapper (practice).
+> **RIS-Kernel** is the concrete systems-level implementation and continuation of the original **RIS (Reduced Interaction Sampling)** framework. While the theoretical foundations, mathematical proofs, and initial simulations are established in the [RIS Repository](https://github.com/santosardr/ris) (theory) and detailed in the scientific article ([DOI: 10.1038/s41598-026-59160-z](https://doi.org/10.1038/s41598-026-59160-z)), this repository delivers the practical implementation, kernel execution patterns, and CPU-bound inference wrapper (practice).
 
 RIS-Kernel is a model-agnostic runtime attention patching layer that enables running massive context windows (64k+ tokens) on commodity, unaccelerated CPU hardware. Rather than being a compiled standalone binary engine, it is implemented as a dynamic wrapper that intercepts standard Transformer self-attention calls at runtime, utilizing sparse stochastic geometry to bypass the quadratic memory bottleneck.
 
@@ -132,11 +133,20 @@ You can export the sparse attention topology with the `--save_graph` flag. Open 
 
 ## 📄 License & Citation
 
-The code is available for scientific transparency and reproducibility under the MIT License. If you use this work, please cite the preprint:
+The code is available for scientific transparency and reproducibility under the MIT License. If you use this work, please cite both the theoretical paper and the repository implementation:
 
 ```bibtex
-@misc{santos2026riskernel,
+@article{santos2026ris,
   author    = {Santos, Anderson R.},
+  title     = {Towards million-token context windows: a topology-preserving framework for adaptive transformer sparsification},
+  journal   = {Scientific Reports},
+  year      = {2026},
+  doi       = {10.1038/s41598-026-59160-z},
+  url       = {https://doi.org/10.1038/s41598-026-59160-z}
+}
+
+@misc{santos2026riskernel,
+  author    = {Santos, Anderson},
   title     = {RIS-Kernel: A Model-Agnostic Architecture for Long-Context LLM Inference via Sparse Attention},
   year      = {2026},
   publisher = {Zenodo},
